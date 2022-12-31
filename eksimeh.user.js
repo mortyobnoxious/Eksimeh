@@ -41,7 +41,17 @@ function getLinkPreview(url) {
           const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText;
           const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
           const image = doc.querySelector('meta[property="og:image"]')?.content;
-          const link = doc.querySelector('link[rel="canonical"]')?.href;
+          let link = doc.querySelector('link[rel="canonical"]')?.href;
+	  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
+	  if (forimdb) {
+	    forimdb = JSON.parse(forimdb)
+	    let ar = forimdb.aggregateRating?.ratingValue || "";
+	    let rc = forimdb.aggregateRating?.ratingCount?.toLocaleString('tr') || "";
+	    let dircre = forimdb.director?.filter(item => item.name) || forimdb.creator?.filter(item => item.name)
+	    link = `★ ${ar.toFixed(1)} (${rc}) ${forimdb.genre?.join(', ') || ""}
+	    ${forimdb.duration ? "<br> ⏲ " + forimdb.duration.replace('PT','').toLowerCase().trim() : ""}
+	    ${dircre ? "<br>" + dircre.map(person => person.name).join(', ') : ""}`;
+	  }
           resolve({title, description, image, link});
         } catch (error) {
           reject(error);
@@ -57,7 +67,7 @@ function getLinkPreview(url) {
 // function to trim and replace given string
 function trimReplace(str, len=150) {
 	str = str ? (str.trim().length > len) ? str.trim().substring(0, len) + "..." : str.trim() : "";
-	str = str.replace('Key, tempo of ', '').replace(' | Musicstax', '')
+	str = str.replace(/Key, tempo of | \| Musicstax| - IMDb/gi, '')
 	if (str.includes('Find the key and tempo for')) {str = ""}
 	return str
 }
