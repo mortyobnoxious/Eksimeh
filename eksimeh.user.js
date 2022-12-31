@@ -7,9 +7,6 @@
 // @match        https://eksisozluk.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=eksisozluk.com
 // @require      https://code.jquery.com/jquery-3.3.1.min.js
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_deleteValue
 // @grant        GM.addStyle
 // @grant        GM.xmlHttpRequest
 // @connect      *
