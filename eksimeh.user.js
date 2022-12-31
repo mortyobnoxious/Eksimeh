@@ -96,8 +96,8 @@ function rTL(x, y) {
 // create link preview on mouseover
 $(document).on('mouseover', '.url', function(e){
 	let href = $(this).attr('href');
-	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.lacontrevoie.fr/i/status/' + href.split('/').pop()}
-	if (href.includes('open.spotify.com/track')) {href = 'https://musicstax.com/track/' + href.split('/').pop()}
+	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.lacontrevoie.fr/i/status/' + href.split('status/').pop()}
+	if (href.includes('open.spotify.com/track')) {href = 'https://musicstax.com/track/' + href.split('track/').pop()}
 	$('body').append('<div class="flex-item loadingpr"></div>')
 	if (!$(this).hasClass('dataadded') || $(this).attr('data-title') == "Error | nitter") {
 		$(this).addClass('dataadded');
