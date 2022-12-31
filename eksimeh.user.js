@@ -43,7 +43,7 @@ function getLinkPreview(url) {
           const image = doc.querySelector('meta[property="og:image"]')?.content;
           let link = doc.querySelector('link[rel="canonical"]')?.href;
 	  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
-	  if (forimdb) {
+	  if (doc.querySelector('meta[property="og:site_name"]')?.content == "IMDb") {
 	    forimdb = JSON.parse(forimdb)
 	    let ar = forimdb.aggregateRating?.ratingValue || "";
 	    let rc = forimdb.aggregateRating?.ratingCount?.toLocaleString('tr') || "";
