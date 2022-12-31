@@ -181,12 +181,28 @@ const nekadaronce = () => {
 }
 nekadaronce();
 
+// add hostname to urls if text doesn't contain url, fix http://https// links, 
+const sourceURL = () => {
+$('.url').each(function(){
+	var newat = $(this).attr('href').replace('http://https//', 'https://');
+	$(this).attr('href', newat);
+	var hostname = $(this).prop('hostname').replace('www.','');
+	if (!$(this).next().is('.sourceurl')) {
+		if (!$(this).text().match(hostname)) {
+			$(this).after('<sup class="sourceurl">('+hostname+')</sup>');
+		}
+	}
+});
+};
+sourceURL();
+
 
 // Mutation Observer
 var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     $(mutation.addedNodes).find(".entry-date, .entry-share").each(function() {
 		nekadaronce();
+	    	sourceURL();
     });
   });
 });
