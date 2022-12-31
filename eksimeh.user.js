@@ -73,7 +73,7 @@ function trimReplace(str, len=150) {
 }
 
 // create div usig title, description etc.
-function createDiv(el, title, description, image, link) {
+function createDiv(title, description, image, link) {
 	let isTweet = link?.includes('twitter.com')
 	$('.flex-item').remove();
 	var div = `<div class="flex-item">
@@ -82,7 +82,7 @@ function createDiv(el, title, description, image, link) {
 			   <small>${link || ""}</small>
                <span class="flex-description">${isTweet ? description : trimReplace(description, 250)}</span>
              </div>`;
-	$(el).append(div);
+	$('body').append(div);
 	if (!title && !description && !image && !link) {
 		$('.flex-item').empty().text('Önizleme bulunamadı!');
 	}
@@ -120,13 +120,13 @@ $(document).on('mouseover', '.url', function(e){
 				'data-image': image,
 				'data-link': link
 			});
-			createDiv($(this), title, description, image, link)
+			createDiv(title, description, image, link)
 			let {top, left} = rTL(e.clientX, e.clientY)
 			$(".flex-item").css({top, left});
 		});
 		return
 	}
-	createDiv($(this), $(this).attr("data-title"), $(this).attr("data-description"), $(this).attr("data-image"), $(this).attr("data-link"))
+	createDiv($(this).attr("data-title"), $(this).attr("data-description"), $(this).attr("data-image"), $(this).attr("data-link"))
 }).mousemove(function(e) {
 	let {top, left} = rTL(e.clientX, e.clientY)
 	$(".flex-item").css({top, left});
