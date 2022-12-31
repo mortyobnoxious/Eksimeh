@@ -64,7 +64,7 @@ function trimReplace(str, len=150) {
 
 // create div usig title, description etc.
 function createDiv(el, title, description, image, link) {
-	let isTweet = link.includes('twitter.com')
+	let isTweet = link?.includes('twitter.com')
 	$('.flex-item').remove();
 	var div = `<div class="flex-item">
                <img src="${image || ""}" class="flex-image">
