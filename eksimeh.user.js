@@ -42,16 +42,15 @@ function getLinkPreview(url) {
           const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
           const image = doc.querySelector('meta[property="og:image"]')?.content;
           let link = doc.querySelector('link[rel="canonical"]')?.href;
-	  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
-	  if (doc.querySelector('meta[property="og:site_name"]')?.content == "IMDb") {
-	    forimdb = JSON.parse(forimdb)
-	    let ar = forimdb.aggregateRating?.ratingValue || "";
-	    let rc = forimdb.aggregateRating?.ratingCount?.toLocaleString('tr') || "";
-	    let dircre = forimdb.director?.filter(item => item.name) || forimdb.creator?.filter(item => item.name)
-	    link = `★ ${ar.toFixed(1)} (${rc}) ${forimdb.genre?.join(', ') || ""}
-	    ${forimdb.duration ? "<br> ⏲ " + forimdb.duration.replace('PT','').toLowerCase().trim() : ""}
-	    ${dircre ? "<br>" + dircre.map(person => person.name).join(', ') : ""}`;
-	  }
+		  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
+		  if (doc.querySelector('meta[property="og:site_name"]')?.content == "IMDb") {
+			  forimdb = JSON.parse(forimdb)
+			  let ar = forimdb.aggregateRating?.ratingValue?.toFixed(1) || "";
+			  let rc = forimdb.aggregateRating?.ratingCount?.toLocaleString('tr') || "";
+			  let dircre = forimdb.director?.filter(item => item.name) || forimdb.creator?.filter(item => item.name)
+			  link = `★ ${ar} (${rc})${forimdb.duration ? " | ⏲ " + forimdb.duration.replace('PT','').toLowerCase().trim() : ""} | ${forimdb.genre?.join(', ') || ""}
+			  ${dircre ? "<br>📽 " + dircre.map(person => person.name).join(', ') : ""}`;
+		  }
           resolve({title, description, image, link});
         } catch (error) {
           reject(error);
