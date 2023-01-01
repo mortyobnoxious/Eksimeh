@@ -19,7 +19,8 @@ GM.addStyle(`
 .flex-item {display: flex;flex-direction: column;position: fixed;background: #0f1622!important;padding: 5px 10px;border-radius: 6px;z-index: 9999999;box-shadow: 2px 2px 3px -1px rgba(2, 2, 2, 0.33);color: #8798A5!important;font-size: 16px!important;max-width: 400px!important;word-break: break-word;white-space: break-spaces;}
 .flex-image {width: 100%;max-height: 200px;object-fit:cover;border-radius: 6px;}
 .flex-title {font-size: 16px; color:#81C14B;padding:0!important;margin:0!important;}
-.flex-item small {font-size:11px;opacity:.7;overflow: hidden;white-space: nowrap;word-break: break-all;text-overflow: ellipsis;}
+.flex-item small {display: flex;gap: 5px;}
+.flex-item small span {font-size:11px;opacity:.7;overflow: hidden;white-space: nowrap;word-break: break-all;text-overflow: ellipsis;}
 .flex-description {font-size: 13px;line-height:1.3rem;}
 .flex-item.loadingpr {background: transparent!important;display: inline-block;width: 50px;height: 50px;border: 3px solid rgba(255,255,255,.3);border-radius: 50%;border-top-color: #fff;animation: spin 1s ease-in-out infinite;-webkit-animation: spin 1s ease-in-out infinite;}
 
@@ -78,7 +79,7 @@ function createDiv(title, description, image, link) {
 	var div = `<div class="flex-item">
                <img src="${image || ""}" class="flex-image">
                <h3 class="flex-title">${trimReplace(title)}</h3>
-			   <small>${link || ""}</small>
+			   <small>${link?.includes('http') ? '<img src="https://www.google.com/s2/favicons?domain='+link+'">' : ""}${link ? '<span>'+link+'</span>' : ""}</small>
                <span class="flex-description">${isTweet ? description : trimReplace(description, 250)}</span>
              </div>`;
 	$('body').append(div);
