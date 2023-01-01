@@ -79,7 +79,7 @@ function createDiv(title, description, image, link) {
 	var div = `<div class="flex-item">
                <img src="${image || ""}" class="flex-image">
                <h3 class="flex-title">${trimReplace(title)}</h3>
-			   <small>${link?.includes('http') ? '<img src="https://www.google.com/s2/favicons?domain='+link+'">' : ""}${link ? '<span>'+link+'</span>' : ""}</small>
+			   <small>${link?.includes('http') ? '<img src="https://www.google.com/s2/favicons?domain='+(new URL(link))?.hostname+'">' : ""}${link ? '<span>'+link+'</span>' : ""}</small>
                <span class="flex-description">${isTweet ? description : trimReplace(description, 250)}</span>
              </div>`;
 	$('body').append(div);
