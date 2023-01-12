@@ -10,3 +10,10 @@ A tampermonkey script to add some improvements for eksisozluk.com.
 
 ### 3. Add hostname for links:
 ![firefox_JI9EncwhKL](https://user-images.githubusercontent.com/42044258/210153535-9f2686c5-e3c3-4fbc-b596-2a2d2f8b0984.png)
+
+### 4. Spoilers:
+![firefox_WtclaTgr4l](https://user-images.githubusercontent.com/42044258/211959549-897174d3-083f-4303-b869-10fc4c339428.gif)
+
+### 5. Add Notes:
+![firefox_pNGPyfkoZj](https://user-images.githubusercontent.com/42044258/211959702-aec2b4a1-c41a-4799-acae-35b08ceca2f0.png)
+![firefox_98hav36J0Q](https://user-images.githubusercontent.com/42044258/211959794-9618b6c0-210c-4b8f-b52c-09b46b6835a7.png)
