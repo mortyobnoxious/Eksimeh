@@ -21,21 +21,37 @@
 GM.addStyle(`
 .flex-item {display: flex;flex-direction: column;position: fixed;background: #0f1622!important;padding: 5px 10px;border-radius: 6px;z-index: 9999999;box-shadow: 2px 2px 3px -1px rgba(2, 2, 2, 0.33);color: #8798A5!important;font-size: 16px!important;max-width: 400px!important;word-break: break-word;white-space: break-spaces;}
 .flex-image {width: 100%;max-height: 200px;object-fit:cover;border-radius: 6px;}
+.flex-image[src*="cdn.eksisozluk.com"] {max-height: 500px;}
 .flex-title {font-size: 16px; color:#81C14B;padding:0!important;margin:0!important;}
 .flex-item small {display: flex;gap: 5px;}
 .flex-item small span {font-size:11px;opacity:.7;overflow: hidden;white-space: nowrap;word-break: break-all;text-overflow: ellipsis;}
 .flex-description {font-size: 13px;line-height:1.3rem;}
-.flex-item.loadingpr {background: transparent!important;display: inline-block;width: 50px;height: 50px;border: 3px solid rgba(255,255,255,.3);border-radius: 50%;border-top-color: #fff;animation: spin 1s ease-in-out infinite;-webkit-animation: spin 1s ease-in-out infinite;}
+.flex-item.loadingpr, .loadingentries {background: transparent!important;display: inline-block;width: 50px;height: 50px;border: 3px solid rgba(255,255,255,.3);border-radius: 50%;border-top-color: #fff;animation: spin 1s ease-in-out infinite;-webkit-animation: spin 1s ease-in-out infinite;}
 
-.popupMeh { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #141D26; border-radius: 5px; box-shadow: 2px 3px 3px rgba(0,0,0,0.52); width: 95vw; max-width: 600px;overflow: hidden;z-index: 9999;}
+
+.popupMeh { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #141D26; border-radius: 5px; box-shadow: 2px 3px 3px rgba(0,0,0,0.52); width: 95vw; max-width: 650px;overflow: hidden;z-index: 9999;}
 .popup-header { display: flex; align-items: center; justify-content: space-between;background: #243447;}
-.popup-header h3 { margin: 0; font-size: 1.5em;padding: 3px 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.popup-header h3 { margin: 0; font-size: 1.5em;padding: 3px 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: #8798A5;}
 .popup-header .close-button { font-size: 1.5em; font-weight: bold; border: none; background: transparent; cursor: pointer;color: #8798A5;padding: 3px 10px;transition: all .3s !important;user-select: none;}
 .popup-header .close-button:hover {background: #BE1E2D;}
 .popup-content { display: flex; flex-wrap: wrap;padding: 15px;max-height: 400px;overflow-y: auto;}
+.popup-buttons {display: flex;align-items: baseline;}
+.popup-buttons a:hover {color: #5fca5f;transition: all .3s !important;}
 
-.noteklediv {display: flex;flex-direction: column;gap: 10px;flex: 1;}
-.noteklediv > div {display: flex;gap: 10px;align-items: center;}
+.popupMeh #entry-item-list {width: 100%;margin: 0;}
+.popupMeh #entry-item-list #entry-item:not(:last-of-type) {border-bottom: 1px solid #00000d69;}
+.popupMeh #entry-item-list #entry-item {position: relative;padding: 0;}
+.popupMeh .info {display: flex;align-items: center;justify-content: space-between;}
+.popupMeh .info .entry-footer-bottom {margin-left: auto;}
+.popupMeh .favorite-links {display: flex;align-items: center;padding: 0 !important;margin: 0 !important;}
+.popupMeh #entry-item-list .content {max-height: initial !important;}
+
+
+.popupMeh #entry-item-list .content {font-size: 14px;}
+.loadingentries {margin: auto;}
+.popupMeh .notdiv {background: #00000d69;}
+.noteklediv {display: flex;flex-direction: column;gap: 10px;flex: 1;color: #8798A5;}
+.noteklediv > div {display: flex;gap: 10px;align-items: center;flex-wrap: wrap;}
 .noteklediv > div > label {min-width: 60px;}
 .noteklediv > div > input, .noteklediv > div > textarea {flex: 1;max-width: 100%;}
 .noteklediv .delnote {margin-left: auto;}
@@ -50,6 +66,7 @@ GM.addStyle(`
 .formattedText[data-c="0"] {display:none!important;}
 .noteklediv input[name="yazar"][disabled] {background: #1b283652;}
 
+#entry-item-list footer:active, .edittools:active {outline: 2px dashed #81c14b1c;}
 
 .notdiv {position: absolute;background: #141d269e;padding: 5px 5px !important;border-radius: 5px;top: 5px;right: 0;font-size: 12px;cursor:pointer;display: flex !important;gap: 2px;}
 
@@ -67,7 +84,7 @@ GM.addStyle(`
 `)
 
 // svgs from Bootstrap
-const SVGs = {
+	const SVGs = {
 "telegram": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telegram" viewBox="0 0 16 16">
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
 </svg>`,
@@ -106,6 +123,14 @@ const SVGs = {
 "spoiler": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-top" viewBox="0 0 16 16">
   <path d="M2 14.5a.5.5 0 0 0 .5.5h11a.5.5 0 1 0 0-1h-1v-1a4.5 4.5 0 0 0-2.557-4.06c-.29-.139-.443-.377-.443-.59v-.7c0-.213.154-.451.443-.59A4.5 4.5 0 0 0 12.5 3V2h1a.5.5 0 0 0 0-1h-11a.5.5 0 0 0 0 1h1v1a4.5 4.5 0 0 0 2.557 4.06c.29.139.443.377.443.59v.7c0 .213-.154.451-.443.59A4.5 4.5 0 0 0 3.5 13v1h-1a.5.5 0 0 0-.5.5zm2.5-.5v-1a3.5 3.5 0 0 1 1.989-3.158c.533-.256 1.011-.79 1.011-1.491v-.702s.18.101.5.101.5-.1.5-.1v.7c0 .701.478 1.236 1.011 1.492A3.5 3.5 0 0 1 11.5 13v1h-7z"/>
 </svg>`,
+"dbleft":`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+  <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+</svg>`,
+"dbright":`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+  <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+</svg>`,
 }
 
 
@@ -133,13 +158,13 @@ class TampermonkeyStorage {
 }
 
 const notlarGM = new TampermonkeyStorage('notlar');
+const parser = new DOMParser();
 
-
-function createPopup(title, div) {
+function createPopup(title, div, eb="") {
   document.querySelector('.popupMeh')?.remove();
   const popup = document.createElement('div');
   popup.classList.add('popupMeh');
-  popup.innerHTML = `<div class="popup-header"><h3>${title}</h3><span class="close-button">&times;</span></div><div class="popup-content">${div}</div>`;
+  popup.innerHTML = `<div class="popup-header"><h3>${title}</h3><span class="popup-buttons">${eb}<span class="close-button">&times;</span></span></div><div class="popup-content">${div}</div>`;
   document.body.appendChild(popup);
   const closeButton = popup.querySelector('.close-button');
   document.addEventListener('click', event => {
@@ -158,7 +183,6 @@ function getLinkPreview(url) {
       onload: function(response) {
         try {
           const html = response.responseText;
-          const parser = new DOMParser();
           const doc = parser.parseFromString(html, 'text/html');
           const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText;
           const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
@@ -230,7 +254,7 @@ $(document).on('mouseover', '.url:not(.formata)', function(e){
 	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.lacontrevoie.fr/i/status/' + href.split('status/').pop()}
 	if (href.includes('open.spotify.com/track')) {href = 'https://musicstax.com/track/' + href.split('track/').pop()}
 	$('body').append('<div class="flex-item loadingpr"></div>')
-	if (!$(this).hasClass('dataadded') || $(this).attr('data-title') == "Error | nitter") {
+	if (!$(this).hasClass('dataadded') || $(this).attr('data-title') == "Error") {
 		$(this).addClass('dataadded');
 
 		getLinkPreview(href).then(preview => {
@@ -401,7 +425,7 @@ $(document).on('click', '.addnote', function(e){
 	let author = $(this).attr('data-author');
 	let ind = retYazarIndex(author)
 	let not = notlarGM.values[ind]?.not || "";
-	let inputs = `<div class="noteklediv"><div><label for="yazar">yazar</label><input value="${author}" name="yazar" type="text" disabled/></div>
+	let inputs = `<div class="noteklediv"><div><label for="yazar"><a href="/biri/${author}">yazar</a></label><input value="${author}" name="yazar" type="text" disabled/></div>
 <div><label for="not">not</label><textarea id="nottextarea" name="not" rows="3">${not}</textarea></div>
 <div>
 <label>önizleme</label><div class="formattedText" data-c="0">${formatText(not)}</div></div>
@@ -454,9 +478,11 @@ $(document).on('click', '.delnote', function(e){
 	tf = tf=="true"?true:false;
 	let ind = retYazarIndex(author);
 	if (ind != -1) {
+		if (confirm("?")) {
 		notlarGM.modify(ind);
 		appendNotes(true);
 		allNotes(tf);
+		}
 	}
 });
 
@@ -518,6 +544,100 @@ $(document).on('click', '.spoilit', function(e){
 	$(this).closest('li').find('.read-more-link-wrapper a')[0]?.click();
 	$(this).closest('li').find('.spl').toggle();
 });
+
+function checkEntry(url) {
+	return new Promise(function(resolve, reject) {
+	GM.xmlHttpRequest({
+		method: "GET",
+		url: url,
+		onload: function(response) {
+			let pos = parser.parseFromString(response.responseText, "text/html");
+			let entries = $(pos).find('#entry-item-list');
+			if ($(entries).find('#entry-item').length) {
+				$(entries).find('#entry-item').each(function() {
+					let favCount = $(this).attr('data-favorite-count');
+					$(this).find('.info').prepend(`${Number(favCount)>0?`<span class="favorite-links"><svg class="eksico"><use xlink:href="#eksico-drop"></use></svg> ${favCount}</span>`:""}`);
+				});
+				let h1 = $(pos).find('#title a')
+				let title = `<a href="${h1.attr('href')}">${h1.text().trim()}</a>`
+				entries = entries.html();
+                resolve({title, entries})
+			} else {
+				resolve("nope")
+			}
+		},
+	});
+	});
+}
+
+function toggleKeydownEvents(add) {
+  let keydownCallback = e => {
+    if (e.which == 37) $('.prevbut')?.trigger('click');
+    else if (e.which == 39) $('.nextbut')?.trigger('click');
+    else if (e.keyCode === 27) $(".popupMeh")?.remove();
+  }
+  add ? $(document).on('keydown', keydownCallback) : $(document).off('keydown', keydownCallback);
+}
+toggleKeydownEvents(true)
+
+function prevNext(clicked) {
+	let el = $(`.topic-list a[href="${clicked}"]`).closest('li:visible');
+	let prev = $(el).prev('li').children('a');
+	let next = $(el).next('li').children('a');
+	$(el).find('a').not('a[href*="?a=tracked&snapshot="]').css('opacity','.4');
+	let butts = `${prev.length?`<a class="nextprev prevbut" href="${prev.attr('href')}" title="${prev.text().trim()}">${SVGs.dbleft}</a>`:''}${next.length?`<a class="nextprev nextbut" href="${next.attr('href')}" title="${next.text().trim()}">${SVGs.dbright}</a>`:''}`
+	return butts
+}
+
+function checkOlay(el) {
+	$(`a[href="${el}"]`).addClass("empty-index-item").parent().removeClass('new-update').find("small").remove();
+	if (!$('.topic-list .new-update').length) {
+		$('.tracked a').removeClass("new-update").find('svg').html('<use xlink:href="#eksico-events-tracked"></use>');
+		$('.nextprev').remove();
+	}
+}
+
+let hrefsForPopup = `a.url[href*="eksisozluk.com/entry"], a[href*="?searchform.author="], a.b[href^="/?q="][href*="%2f"], a.b[href*="%2f%40"], .stats a[href^="/?q="], a[href*="?day="], .new-update a, a[href^="/entry/"], a[href$="?a=buddyrecent"], .nextbut, .prevbut`;
+let hrefstoReturn = `a.b[href*="sorular%c4%b1n%c4%b1z%c4%b1+yan%c4%b1tl%c4%b1yor"][href*="%40"], a.b[href*="yan%c4%b1tl%c4%b1yorum"][href*="%40"], .svgico-facebook, .svgico-twitter, #whatisclicked, #site-footer a, .entry-date.permalink, #show-caylak-favs-link, a[href*="/entry/duzelt/"], .last, .next, .prev, .gotodate`;
+
+// entryleri popup içinde aç
+$(document).on('click', hrefsForPopup, function(e){
+	let _this = $(this);
+	if (($(_this).is(hrefstoReturn)) || ($(_this).find('small').text() >= 11)) { return }
+	e.preventDefault();
+	let href = $(_this).attr("href").replace('www.','');
+    createPopup("", `<div class="loadingentries"></div>`, prevNext(href));
+	checkEntry(href).then(function(w) {
+		if (w == "nope") {
+			createPopup(`<small style="color: #E62537;">böyle bir entry yok. hiç olmadı ki...</small>`, ``, prevNext(href))
+			return
+		}
+		let {title, entries} = w;
+		createPopup(title, `<ul id="entry-item-list">${entries}</ul>`, prevNext(href))
+		if ($(_this).is('[href*="tracked&snapshot"]')) { checkOlay(href) }
+	});
+
+});
+
+
+function swipeNavigation(element, leftButton, rightButton) {
+  let elements = document.querySelectorAll(element);
+  let threshold=100, xstart=0, xend=0;
+  function checkDirection() {
+    if (Math.abs(xend - xstart) < threshold) return;
+    if (xend < xstart) { document.querySelector(leftButton)?.click(); }
+    if (xend > xstart) { document.querySelector(rightButton)?.click(); }
+  }
+  for (const element of elements) {
+    element?.addEventListener("touchstart", function(e) { xstart = e.touches[0].screenX; });
+    element?.addEventListener("touchend", function(e) { xend = e.changedTouches[0].screenX; checkDirection(); });
+    element?.addEventListener("pointerdown", function(e) { xstart = e.screenX; });
+    element?.addEventListener("pointerup", function(e) { xend = e.screenX; checkDirection(); });
+  }
+}
+
+swipeNavigation('#entry-item-list footer', '#topic .pager .next', '#topic .pager .prev');
+swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar olaylar"]', 'a[title="dünyamızda neler olup bitiyor"]');
 
 // Mutation Observer
 var observer = new MutationObserver(function(mutations) {
