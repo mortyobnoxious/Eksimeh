@@ -40,10 +40,10 @@ GM.addStyle(`
 
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
 .popupMeh #entry-item-list #entry-item:not(:last-of-type) {border-bottom: 1px solid #00000d69;}
-.popupMeh #entry-item-list #entry-item {position: relative;padding: 0;}
+.popupMeh #entry-item-list #entry-item {position: relative;padding: 0;color: #8798A5;}
 .popupMeh .info {display: flex;align-items: center;justify-content: space-between;}
 .popupMeh .info .entry-footer-bottom {margin-left: auto;}
-.popupMeh .favorite-links {display: flex;align-items: center;padding: 0 !important;margin: 0 !important;}
+.popupMeh .favorite-links {display: flex !important;align-items: center;padding: 0 !important;margin: 0 !important;}
 .popupMeh #entry-item-list .content {max-height: initial !important;}
 
 
@@ -62,9 +62,19 @@ GM.addStyle(`
 .notes {gap:0}
 .allnotes:hover {background: #243447;transition: all .3s;border-radius: 5px;}
 .formatButs button {display: flex;justify-content: center;align-items: center;padding: 5px 10px !important;}
-.formattedText {display: block !important;word-wrap: anywhere;word-break: break-word;overflow-y: auto;max-height: 80px;border: 1px solid #1b2836 !important;border-radius: 8px;padding: .2rem .7rem;}
-.formattedText[data-c="0"] {display:none!important;}
+.formattedText, .kelimeler {display: block !important;word-wrap: anywhere;word-break: break-word;overflow-y: auto;max-height: 80px;border: 1px solid #1b2836 !important;border-radius: 8px;padding: .2rem .7rem;}
+[data-c="0"] {display:none!important;}
 .noteklediv input[name="yazar"][disabled] {background: #1b283652;}
+.savenote.done::before, .delnote.done::before {content: "Kaydedildi";margin-right: 10px;color: #81C14B;}
+.savenote.done svg, .delnote.done svg {transition: all .3s;transform: scale(1.5) rotate(45deg);color: #81C14B;}
+.delnote.done::before {content: "Silindi";color: #BE1E2D;}
+.delnote.done svg {color: #BE1E2D;}
+.noteklediv > .kdiv {flex-wrap: nowrap;}
+.kelimeler {display: flex !important;gap: 5px;flex-wrap: wrap;max-height: 200px;padding: 0;border: none !important}
+.kelimeler span {cursor: pointer;padding: 2px 4px;border-radius: 6px;border: 1px solid #1b2836 !important;}
+.dunbug + label {display: flex;justify-content: center;align-items: center;border-radius: 6px;border: 1px solid #1b2836 !important;transition: all .3s;cursor:pointer}
+.dunbug {display:none;}
+.dunbug:checked + label {background: #1b7a44;color: #B8C1C8;}
 
 #entry-item-list footer:active, .edittools:active {outline: 2px dashed #81c14b1c;}
 
@@ -78,6 +88,10 @@ GM.addStyle(`
 
 .spoilit {display: inline-flex;align-items: center;gap: 4px;}
 .sporotate {transform: rotate(180deg);transition: all .3s;}
+
+.topic-list li a mark.highlighted {border-radius: 5px;padding: 0 3px;color: #B8C1C8;}
+#video {display:none;}
+.underline {text-decoration: underline;}
 
 @keyframes spin {to { -webkit-transform: rotate(360deg); }}
 @-webkit-keyframes spin {to { -webkit-transform: rotate(360deg); }}
@@ -111,7 +125,7 @@ GM.addStyle(`
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
   <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
 </svg>`,
-"save": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+"save": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 17 17">
   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
 </svg>`,
@@ -158,6 +172,9 @@ class TampermonkeyStorage {
 }
 
 const notlarGM = new TampermonkeyStorage('notlar');
+const HLIGHT = new TampermonkeyStorage('highglight');
+const SETTINGS = new TampermonkeyStorage('settings');
+
 const parser = new DOMParser();
 
 function createPopup(title, div, eb="") {
@@ -377,12 +394,28 @@ const addButtons = () => {
 <a href="#" class="flat-button wtfbutton addnosk" title="html olarak kaydet">${SVGs.html}</a>
 <a href="tg://msg_url?url=https://eksisozluk.com/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
 <a href="#" class="addnote flat-button wtfbutton addnosk" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
-<a href="#" class="shownotes flat-button wtfbutton addnosk" title="tüm notlara bak">${SVGs.notesall}</a>
 </li>`);
 		});
 	});
 }
 addButtons();
+
+function addOtherLinks() {
+// edit this
+$('#top-navigation .dropdown-menu li:not(.separated):last, #top-navigation #options-dropdown li:not(.separated):last').before(`
+<li><a href="#" class="addwordsdiv flat-button wtfbutton addnosk" title="kelime ekle">kelime ekle</a></li>
+<li><a href="#" class="shownotes flat-button wtfbutton addnosk" title="kelime ekle">notlar</a></li>
+`);
+$('.sub-title-menu').append(`
+${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
+`)
+}
+addOtherLinks()
+$(document).on('click', '.togglevideo', function(e){
+	e.preventDefault();
+	$(this).toggleClass('underline');
+	$('#video').toggle();
+});
 
 function retYazarIndex(yazar) {
 	return notlarGM.findIndex("yazar", yazar)
@@ -456,8 +489,7 @@ $(document).on('click', '.formatButs button', function(e){
 	var g = $(this).attr('data-g');
 	var ae = $('#nottextarea').val();
 	if (ae.length>0) {ae = ae + " "}
-	$('#nottextarea').val(ae + g).trigger('input').focus();
-
+	$('#nottextarea').val(ae + g).trigger('input').focus();s
 });
 
 $(document).on('click', '.savenote', function(e){
@@ -467,8 +499,12 @@ $(document).on('click', '.savenote', function(e){
 		not: $("textarea[name='not']").val()
 	};
 	let ind = retYazarIndex(data.yazar);
-	notlarGM.modify(ind, data);
-	appendNotes(true);
+	if (data.not) {
+		notlarGM.modify(ind, data);
+		appendNotes(true);
+		$(this).addClass('done');
+		setTimeout(() => { $('.popupMeh').fadeOut('fast') }, 1200);
+	}
 });
 
 $(document).on('click', '.delnote', function(e){
@@ -482,6 +518,8 @@ $(document).on('click', '.delnote', function(e){
 		notlarGM.modify(ind);
 		appendNotes(true);
 		allNotes(tf);
+		$(this).addClass('done');
+		setTimeout(() => { $('.popupMeh').fadeOut('fast') }, 1200);
 		}
 	}
 });
@@ -619,6 +657,96 @@ $(document).on('click', hrefsForPopup, function(e){
 
 });
 
+function solFrameHighlight() {
+	let options = {year: 'numeric', month: 'long', day: 'numeric'};
+	let today = new Date();
+	let todayTR = today.toLocaleDateString("tr-TR", options)
+
+	let yesterday = today-today.setDate(today.getDate()-1);
+	let yesterdayTR = today.toLocaleDateString("tr-TR", options)
+	let dunbugAR = [];
+	SETTINGS.findIndex('bugün')>=0&&dunbugAR.push(todayTR)
+	SETTINGS.findIndex('dün')>=0&&dunbugAR.push(yesterdayTR)
+	let arrayToHighlight = [...dunbugAR, ...HLIGHT.values]
+	let reg = arrayToHighlight.map((a) => `(${a.replace(/([()])/g,'\\$1')})`).join('|');
+	reg = new RegExp(reg, 'gi')
+	$('.topic-list li a, #channel-follow-list li a').each(function(){
+		if ($(this).find('.highlighted').length) return
+		let small = $(this).find('small, .detail').prop('outerHTML');
+		let text = $(this).clone().children(':not(.caption)').remove().end().text();
+		let replacedt = text.replace(reg, '<mark class="highlighted">$&</mark>')
+		if (!small) {small = ""}
+		$(this).empty().append(replacedt+small);
+	});
+}
+solFrameHighlight();
+
+
+function appendWords(ap=false) {
+	let spans = HLIGHT.values.map((a) => `<span title="silmek için çift tıkla">${a}</span>`).join('');
+	let div = `<div class="kelimeler" data-c="${HLIGHT.values.length}">
+${spans}
+</div>`;
+	if (ap) {
+		$('.kelimeler').remove();
+		$('.kdiv').append(div)
+	} else {
+		return div
+	}
+}
+
+$(document).on('click', '.addwordsdiv', function(e){
+	e.preventDefault();
+	let div = `<div class="noteklediv"><div><label for="kelime">kelime</label><input name="kelime" type="text" placeholder="sol frame'de vurgulanacak kelime ekle"><button class="addwords">ekle</button></div>
+<div class="kdiv">
+<label>kelimeler</label>
+${appendWords()}
+</div>
+<div>
+<label>diğer</label>
+<input class="dunbug" type="checkbox" id="bugun" name="bugun" value="bugün" ${SETTINGS.findIndex('bugün')>=0?"checked='true'":""}>
+<label for="bugun" title="sol frame'de bugünün tarihini vurgula">bugün</label>
+<input class="dunbug" type="checkbox" id="dun" name="dun" value="dün" ${SETTINGS.findIndex('dün')>=0?"checked='true'":""}>
+<label for="dun"" title="sol frame'de dünün tarihini vurgula">dün</label>
+</div>
+</div>`;
+	createPopup("Kelime Ekle", div)
+
+});
+
+$(document).on('click', '.addwords', function(e){
+	e.preventDefault();
+	let word = $('input[name="kelime"]').val().trim();
+	if (word) {
+		let ind = HLIGHT.findIndex(word);
+		HLIGHT.modify(ind, word);
+		appendWords(true);
+		solFrameHighlight();
+		$('input[name="kelime"]').val("");
+	}
+});
+
+$(document).on('dblclick', '.kelimeler > span', function(e){
+	e.preventDefault();
+	let word = $(this).text().trim();
+	let ind = HLIGHT.findIndex(word);
+	HLIGHT.modify(ind);
+	appendWords(true);
+	solFrameHighlight();
+});
+
+$(document).on('change', '.dunbug', function(e){
+	let key = $(this).val();
+	let val = $(this).prop("checked")
+	if (val) {
+		let ind = SETTINGS.findIndex(key);
+		SETTINGS.modify(ind, key);
+	} else {
+		let ind = SETTINGS.findIndex(key);
+		SETTINGS.modify(ind);
+	}
+	solFrameHighlight();
+});
 
 function swipeNavigation(element, leftButton, rightButton) {
   let elements = document.querySelectorAll(element);
@@ -642,12 +770,13 @@ swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar ol
 // Mutation Observer
 var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
-    $(mutation.addedNodes).find(".entry-date, .entry-share").each(function() {
+    $(mutation.addedNodes).find(".entry-date, .entry-share, .topic-list a").each(function() {
 		howLongAgo();
 		sourceURL();
 		addButtons();
 		appendNotes();
 		spoilerOp();
+		solFrameHighlight(); // not working
     });
   });
 });
