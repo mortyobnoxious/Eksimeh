@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      0.1
+// @version      0.8
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -29,7 +29,7 @@ GM.addStyle(`
 .flex-item.loadingpr, .loadingentries {background: transparent!important;display: inline-block;width: 50px;height: 50px;border: 3px solid rgba(255,255,255,.3);border-radius: 50%;border-top-color: #fff;animation: spin 1s ease-in-out infinite;-webkit-animation: spin 1s ease-in-out infinite;}
 
 
-.popupMeh { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #141D26; border-radius: 5px; box-shadow: 2px 3px 3px rgba(0,0,0,0.52); width: 95vw; max-width: 650px;overflow: hidden;z-index: 9999;}
+.popupMeh { position: fixed; top: 115px; left: 50%; transform: translate(-50%, 0); background-color: #141D26; border-radius: 5px; box-shadow: 2px 3px 3px rgba(0,0,0,0.52); width: 95vw; max-width: 650px;overflow: hidden;z-index: 9999;}
 .popup-header { display: flex; align-items: center; justify-content: space-between;background: #243447;}
 .popup-header h3 { margin: 0; font-size: 1.5em;padding: 3px 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: #8798A5;}
 .popup-header .close-button { font-size: 1.5em; font-weight: bold; border: none; background: transparent; cursor: pointer;color: #8798A5;padding: 3px 10px;transition: all .3s !important;user-select: none;}
@@ -145,6 +145,10 @@ GM.addStyle(`
   <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
   <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
 </svg>`,
+"random": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5z"/>
+  <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
+</svg>`,
 }
 
 
@@ -174,6 +178,7 @@ class TampermonkeyStorage {
 const notlarGM = new TampermonkeyStorage('notlar');
 const HLIGHT = new TampermonkeyStorage('highglight');
 const SETTINGS = new TampermonkeyStorage('settings');
+const randENTRIES = new TampermonkeyStorage('entries');
 
 const parser = new DOMParser();
 
@@ -331,7 +336,7 @@ const formattedDate = (d) => {
 	return `${d.toLocaleDateString('tr', dconfig)},  ${d.toLocaleDateString('tr', wconfig)} ${d.toLocaleTimeString('tr', tconfig)}`
 }
 
-// nekadaronce function to add timesince and formatted date as title
+// function to add timesince and formatted date as title
 const howLongAgo = () => {
 	$('.entry-date, .matter-date, #message-thread time').each(function(){
 		let hrefen = $(this).attr('href');
@@ -372,6 +377,7 @@ $('.url:not(.formata)').each(function(){
 };
 sourceURL();
 
+// check until element exist
 function checkElExist(el, callback) {
 	let elCheck = setInterval(function() {
 		if ($(el).length) {
@@ -411,6 +417,7 @@ ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 `)
 }
 addOtherLinks()
+
 $(document).on('click', '.togglevideo', function(e){
 	e.preventDefault();
 	$(this).toggleClass('underline');
@@ -613,6 +620,7 @@ function toggleKeydownEvents(add) {
     if (e.which == 37) $('.prevbut')?.trigger('click');
     else if (e.which == 39) $('.nextbut')?.trigger('click');
     else if (e.keyCode === 27) $(".popupMeh")?.remove();
+    else if (e.keyCode === 82) $(".randomentry a")?.trigger('click');
   }
   add ? $(document).on('keydown', keydownCallback) : $(document).off('keydown', keydownCallback);
 }
@@ -746,6 +754,48 @@ $(document).on('change', '.dunbug', function(e){
 		SETTINGS.modify(ind);
 	}
 	solFrameHighlight();
+});
+
+// homepage entries
+function homePage() {
+	$('.home-page-entry-list #entry-item').each(function(){
+		let entryid = $(this).attr('data-id');
+		if (entryid) {
+			let ind = randENTRIES.findIndex(entryid);
+			randENTRIES.modify(ind, entryid);
+		}
+	});
+	let maxLen = 1000;
+	let len = randENTRIES.values.length
+	if (randENTRIES.values.length >= maxLen) {
+		let spliced = randENTRIES.values.splice(len-maxLen);
+		randENTRIES.removeAll();
+		GM_setValue(randENTRIES.key, spliced);
+	}
+}
+homePage()
+
+function randomEntryAppend() {
+	let ind = Math.floor(Math.random() * randENTRIES.values.length);
+	let randValInd = randENTRIES.values[ind]
+	$('.randomentry').remove();
+	let randEntryHtml = `<li class="randomentry"><a title="random entry (${randENTRIES.values.length})\ntıkla yada r\'ye bas${!randValInd?'\nhiç entry yok anasayfaya daha fazla uğramalısın':''}" href="/entry/${randValInd || '1'}" data-id="${randValInd || '1'}">${SVGs.random}</a></li>`;
+	if ($('#top-login-link').length) { // eğer giriş yapılmamışsa
+		$('#top-login-link').parent().before(randEntryHtml);
+	} else {
+		$('#top-navigation .tracked').after(randEntryHtml);
+	}
+}
+randomEntryAppend();
+
+// click to open a random entry
+$(document).on('click', '.randomentry a', function(e){
+	let thisID = $(this).attr('data-id');
+	if (thisID !== '1') {
+		let ind = randENTRIES.findIndex(thisID);
+		randENTRIES.modify(ind);
+		randomEntryAppend();
+	}
 });
 
 function swipeNavigation(element, leftButton, rightButton) {
