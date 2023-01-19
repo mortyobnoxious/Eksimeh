@@ -83,7 +83,7 @@ eksisozluk.com için birtakım özellikler.<br>
 
 <li><h3>başlık videolarını gizleme</h3></li>
 
-<li><h3>random entru:</h3></li>
+<li><h3>random entry:</h3></li>
   <p>
   anasayfa'daki entry idlerini biriktirip, istek dahilinde random entry getirir.
   </p>
