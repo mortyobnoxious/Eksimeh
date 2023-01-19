@@ -66,7 +66,7 @@ eksisozluk.com için birtakım özellikler.<br>
 <li><h3>sol frame'de vurgulanacak kelimeler ekleme:</h3></li>
 <details>
   <summary>screenshot</summary>
-  sol frame'de vurgulamak için kelieme eklemeye yarar. kelimeler çift tıklayarak silinebilir. bugün ve dünün tarihi de seçilerek eklenebilir. 
+  sol frame'de vurgulamak için kelime eklemeye yarar. kelimeler çift tıklayarak silinebilir. bugün ve dünün tarihi de seçilerek eklenebilir. 
   <img src="https://user-images.githubusercontent.com/42044258/213497823-149e939c-0589-4f74-b834-dc434c39388f.png"/>
 </details>
 
