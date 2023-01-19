@@ -67,7 +67,7 @@ eksisozluk.com için birtakım özellikler.<br>
 <details>
   <summary>screenshot</summary>
   sol frame'de vurgulamak için kelieme eklemeye yarar. kelimeler çift tıklayarak silinebilir. bugün ve dünün tarihi de seçilerek eklenebilir. 
-  <img src="[https://user-images.githubusercontent.com/42044258/212937504-a118747c-1a53-49fc-aa62-2b7b3279becc.png](https://user-images.githubusercontent.com/42044258/213497564-d240353f-a708-4955-aa85-5baaf8be2f4a.png)"/>
+  <img src="https://user-images.githubusercontent.com/42044258/212937504-a118747c-1a53-49fc-aa62-2b7b3279becc.png"/>
 </details>
 
 <li><h3>başlık videolarını gizleme</h3></li>
