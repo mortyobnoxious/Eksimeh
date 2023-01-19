@@ -41,7 +41,7 @@ GM.addStyle(`
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
 .popupMeh #entry-item-list #entry-item:not(:last-of-type) {border-bottom: 1px solid #00000d69;}
 .popupMeh #entry-item-list #entry-item {position: relative;padding: 0;color: #8798A5;}
-.popupMeh .info {display: flex;align-items: center;justify-content: space-between;}
+.popupMeh .info {display: flex;align-items: center;justify-content: space-between;float: none !important;}
 .popupMeh .info .entry-footer-bottom {margin-left: auto;}
 .popupMeh .favorite-links {display: flex !important;align-items: center;padding: 0 !important;margin: 0 !important;}
 .popupMeh #entry-item-list .content {max-height: initial !important;}
@@ -89,7 +89,7 @@ GM.addStyle(`
 .spoilit {display: inline-flex;align-items: center;gap: 4px;}
 .sporotate {transform: rotate(180deg);transition: all .3s;}
 
-.topic-list li a mark.highlighted {border-radius: 5px;padding: 0 3px;color: #B8C1C8;}
+.topic-list li a mark.highlighted {border-radius: 5px;padding: 0 3px;background-color: #1b7a44;color: #B8C1C8;}
 #video {display:none;}
 .underline {text-decoration: underline;}
 
