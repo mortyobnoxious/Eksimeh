@@ -15,7 +15,10 @@ eksisozluk.com için birtakım özellikler.<br>
 <li><h3>link önizlemeleri:</h3></li>
 <details>
   <summary>screenshot</summary>
+  <div>
   mouse ile linklerin üzerine gelindiğinde, ilgili link için bir önizleme sunar.
+  twitter ve imdb için özel önizlemeler vardır.
+  </div>
   <img src="https://user-images.githubusercontent.com/42044258/210153021-8fb3c395-5d08-49ca-bdf7-0cc90d653562.png"/>
 </details>
 
