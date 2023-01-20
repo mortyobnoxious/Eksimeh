@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      0.8
+// @version      1.0
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
