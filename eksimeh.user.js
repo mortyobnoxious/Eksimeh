@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      0.9
+// @version      0.8
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -48,7 +48,7 @@ GM.addStyle(`
 
 
 .popupMeh #entry-item-list .content {font-size: 14px;}
-.loadingentries {margin: auto;}
+.loadingentries {margin: auto !important;display: flex;}
 .popupMeh .notdiv {background: #00000d69;}
 .noteklediv {display: flex;flex-direction: column;gap: 10px;flex: 1;color: #8798A5;}
 .noteklediv > div {display: flex;gap: 10px;align-items: center;flex-wrap: wrap;}
@@ -420,6 +420,38 @@ ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 `)
 }
 addOtherLinks()
+
+function linksForSolFrame() {
+	if(!$(".getfromsozlock").length) {
+		$("h2:contains(dünün en beğenilen entry'leri)").append('<a class="getfromsozlock" href="https://sozlock.com/" target="_blank" style="margin: 0 5px;font-size: 14px;" title="sozlock\'tan debe al">sozlock</a></a>');
+	}
+}
+linksForSolFrame();
+
+$(document).on('click', '.getfromsozlock', function(e){
+	e.preventDefault();
+	$(this).toggleClass('underline');
+	let topiclist = $(this).closest('#content-body, #index-section').find('.topic-list');
+	$(topiclist).addClass('loadingentries')
+	$(topiclist).find('li').toggle();
+	if ($('li.sozlock').length) {
+		$(topiclist).removeClass('loadingentries')
+		return false
+	}
+	GM.xmlHttpRequest({
+		method: "GET",
+		url: "https://sozlock.com/",
+		onload: function(response) {
+			let bunlarial = parser.parseFromString(response.responseText, "text/html");
+			let entriessoz = $(bunlarial).find('.entrylist li').map(function() {
+				return '<li class="sozlock"><a href="'+$(this).find('.basliklogo a').attr('href').replace('https://eksisozluk.com','')+'"><span class="caption"> '+$(this).find('h3').text().split(/(^\d{1,2}\.\s)/)[2]+'</span></a></li>'
+			}).get().join("");
+			$(topiclist).append(entriessoz);
+			$(topiclist).removeClass('loadingentries')
+
+		}
+	});
+});
 
 $(document).on('click', '.togglevideo', function(e){
 	e.preventDefault();
@@ -819,16 +851,27 @@ function swipeNavigation(element, leftButton, rightButton) {
 swipeNavigation('#entry-item-list footer', '#topic .pager .next', '#topic .pager .prev');
 swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar olaylar"]', 'a[title="dünyamızda neler olup bitiyor"]');
 
+
+var observerFrame = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+            solFrameHighlight();
+			linksForSolFrame()
+        }
+    });
+});
+
+observerFrame.observe(document.getElementById("partial-index"), { childList: true });
+
 // Mutation Observer
-var observer = new MutationObserver(function(mutations) {
+const observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
-    $(mutation.addedNodes).find(".entry-date, .entry-share, .topic-list a").each(function() {
+    $(mutation.addedNodes).find(".entry-date, .entry-share").each(function() {
 		howLongAgo();
 		sourceURL();
 		addButtons();
 		appendNotes();
 		spoilerOp();
-		solFrameHighlight(); // not working
     });
   });
 });
