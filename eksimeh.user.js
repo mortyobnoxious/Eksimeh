@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.1
+// @version      1.2
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -38,6 +38,7 @@ GM.addStyle(`
 .popup-buttons {display: flex;align-items: center;}
 .popup-buttons a:hover {color: #5fca5f;transition: all .3s !important;}
 
+.popupMeh a {color: #53a245;}
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
 .popupMeh #entry-item-list #entry-item:not(:last-of-type) {border-bottom: 1px solid #00000d69;}
 .popupMeh #entry-item-list #entry-item {position: relative;padding: 0;color: #8798A5;}
@@ -78,6 +79,7 @@ GM.addStyle(`
 .nextprev {display: flex;height: 100%;align-items: center;padding: 0 5px;}
 .nextprev:hover {background: #265d26;transition: all .3s;}
 .randomentry {vertical-align: bottom;}
+.addnote.prnote {display: inline-flex;border: 1px solid #141D26;border-radius: 50%;height: 32px;width: 32px;align-items: center;justify-content: center;}
 
 #entry-item-list footer:active, .edittools:active {outline: 2px dashed #81c14b1c;}
 
@@ -418,6 +420,10 @@ $('#top-navigation .dropdown-menu li:not(.separated):last, #top-navigation #opti
 $('.sub-title-menu').append(`
 ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 `)
+let author = $('#user-profile-title').attr('data-nick');
+$('.sub-title-menu.profile-buttons').append(`
+<a href="#" class="addnote prnote eksico" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
+`)
 }
 addOtherLinks()
 
@@ -505,7 +511,7 @@ $(document).on('click', '.addnote', function(e){
 <div>
 <label>önizleme</label><div class="formattedText" data-c="0">${formatText(not)}</div></div>
 <div class="formatButs">
-<button title="entry id" data-g="#${entryid}">id</button>
+${entryid?`<button title="entry id" data-g="#${entryid}">id</button>`:''}
 <button title="bkz" data-g="\`\`">hede</button>
 <button title="link" data-g="[url text]">http://</button>
 <button title="raptiye" data-g="📌">📌</button>
