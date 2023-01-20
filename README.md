@@ -88,4 +88,9 @@ eksisozluk.com için birtakım özellikler.<br>
 anasayfa'daki entry idlerini biriktirip, istek dahilinde random entry getirir.
 </p>
 
+<li><h3>sozlock sitesinden debe alma</h3></li>
+<p>
+sozlock.com'dan debe listesini getirir.
+</p>
+
 <ol>
