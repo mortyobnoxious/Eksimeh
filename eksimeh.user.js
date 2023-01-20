@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      0.8
+// @version      0.9
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -30,12 +30,12 @@ GM.addStyle(`
 
 
 .popupMeh { position: fixed; top: 115px; left: 50%; transform: translate(-50%, 0); background-color: #141D26; border-radius: 5px; box-shadow: 2px 3px 3px rgba(0,0,0,0.52); width: 95vw; max-width: 650px;overflow: hidden;z-index: 9999;}
-.popup-header { display: flex; align-items: center; justify-content: space-between;background: #243447;}
-.popup-header h3 { margin: 0; font-size: 1.5em;padding: 3px 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;color: #8798A5;}
-.popup-header .close-button { font-size: 1.5em; font-weight: bold; border: none; background: transparent; cursor: pointer;color: #8798A5;padding: 3px 10px;transition: all .3s !important;user-select: none;}
+.popup-header { display: flex; align-items: stretch; justify-content: space-between;background: #243447;}
+.popup-header h3 { margin: 0; font-size: 1.5em;padding: 3px 10px;color: #8798A5;}
+.popup-header .close-button { font-size: 1.5em; font-weight: bold; border: none; background: transparent; cursor: pointer;color: #8798A5;padding: 3px 10px;transition: all .3s !important;user-select: none;height: 100%;align-items: center;display: flex;}
 .popup-header .close-button:hover {background: #BE1E2D;}
 .popup-content { display: flex; flex-wrap: wrap;padding: 15px;max-height: 400px;overflow-y: auto;}
-.popup-buttons {display: flex;align-items: baseline;}
+.popup-buttons {display: flex;align-items: center;}
 .popup-buttons a:hover {color: #5fca5f;transition: all .3s !important;}
 
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
@@ -75,6 +75,9 @@ GM.addStyle(`
 .dunbug + label {display: flex;justify-content: center;align-items: center;border-radius: 6px;border: 1px solid #1b2836 !important;transition: all .3s;cursor:pointer}
 .dunbug {display:none;}
 .dunbug:checked + label {background: #1b7a44;color: #B8C1C8;}
+.nextprev {display: flex;height: 100%;align-items: center;padding: 0 5px;}
+.nextprev:hover {background: #265d26;transition: all .3s;}
+.randomentry {vertical-align: bottom;}
 
 #entry-item-list footer:active, .edittools:active {outline: 2px dashed #81c14b1c;}
 
@@ -145,7 +148,7 @@ GM.addStyle(`
   <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
   <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
 </svg>`,
-"random": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
+"random": `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5z"/>
   <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
 </svg>`,
@@ -458,11 +461,11 @@ $(document).on('click', '.shownotes', function(e){
 	allNotes()
 });
 
-
 $(document).on('click', '.addnote', function(e){
 	if ($(e.target).hasClass('formata')) {return}
 	e.preventDefault();
 	let author = $(this).attr('data-author');
+	let entryid = $(this).closest('li#entry-item').attr('data-id');
 	let ind = retYazarIndex(author)
 	let not = notlarGM.values[ind]?.not || "";
 	let inputs = `<div class="noteklediv"><div><label for="yazar"><a href="/biri/${author}">yazar</a></label><input value="${author}" name="yazar" type="text" disabled/></div>
@@ -470,6 +473,7 @@ $(document).on('click', '.addnote', function(e){
 <div>
 <label>önizleme</label><div class="formattedText" data-c="0">${formatText(not)}</div></div>
 <div class="formatButs">
+<button title="entry id" data-g="#${entryid}">id</button>
 <button title="bkz" data-g="\`\`">hede</button>
 <button title="link" data-g="[url text]">http://</button>
 <button title="raptiye" data-g="📌">📌</button>
@@ -545,8 +549,6 @@ function appendNotes(update=false) {
 }
 appendNotes();
 
-
-
 $.fn.nextUntilWithTextNodes = function (until) {
     var matched = $.map(this, function (elem, i, until) {
         var matched = [];
@@ -617,6 +619,7 @@ function checkEntry(url) {
 
 function toggleKeydownEvents(add) {
   let keydownCallback = e => {
+	if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
     if (e.which == 37) $('.prevbut')?.trigger('click');
     else if (e.which == 39) $('.nextbut')?.trigger('click');
     else if (e.keyCode === 27) $(".popupMeh")?.remove();
@@ -769,7 +772,6 @@ function homePage() {
 	let len = randENTRIES.values.length
 	if (randENTRIES.values.length >= maxLen) {
 		let spliced = randENTRIES.values.splice(len-maxLen);
-		randENTRIES.removeAll();
 		GM_setValue(randENTRIES.key, spliced);
 	}
 }
