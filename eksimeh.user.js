@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.0
+// @version      1.1
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -713,6 +713,7 @@ function solFrameHighlight() {
 	let arrayToHighlight = [...dunbugAR, ...HLIGHT.values]
 	let reg = arrayToHighlight.map((a) => `(${a.replace(/([()])/g,'\\$1')})`).join('|');
 	reg = new RegExp(reg, 'gi')
+	if (!arrayToHighlight.length) return
 	$('.topic-list li a, #channel-follow-list li a').each(function(){
 		if ($(this).find('.highlighted').length) return
 		let small = $(this).find('small, .detail').prop('outerHTML');
