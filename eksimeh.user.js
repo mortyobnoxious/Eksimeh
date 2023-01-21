@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.4
+// @version      1.5
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -37,6 +37,7 @@ GM.addStyle(`
 .popup-content { display: flex; flex-wrap: wrap;padding: 15px;max-height: 400px;overflow-y: auto;}
 .popup-buttons {display: flex;align-items: center;}
 .popup-buttons a:hover {color: #5fca5f;transition: all .3s !important;}
+.popup-buttons input#searchpopup {padding: .3rem .6rem;margin-left: auto;}
 
 .popupMeh a {color: #53a245;}
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
@@ -424,7 +425,7 @@ ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 let author = $('#user-profile-title').attr('data-nick');
 $('.sub-title-menu.profile-buttons').append(`
 <a href="#" class="addnote prnote eksico" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
-`)
+`);
 }
 addOtherLinks()
 
@@ -491,9 +492,16 @@ function allNotes(ret=false) {
 </div>`;
 	});
 	let notes = `<div class="noteklediv notes">${divs}</div>`
-	createPopup(`Notlar (${notlarGM.values.length})`, notes)
+	let input = `<input type="text" id="searchpopup" placeholder="ara..." autocomplete="off"/>`
+	createPopup(`Notlar (${notlarGM.values.length})`, notes, input)
 
 }
+
+$(document).on('input', '#searchpopup', function(e){
+  let searchedText = $(this).val();
+  $(".notes > .allnotes").hide().filter(":contains('"+searchedText+"')").show();
+});
+
 
 $(document).on('click', '.shownotes', function(e){
 	e.preventDefault();
@@ -569,7 +577,9 @@ $(document).on('click', '.delnote', function(e){
 		appendNotes(true);
 		allNotes(tf);
 		$(this).addClass('done');
-		setTimeout(() => { $('.popupMeh').fadeOut('fast') }, 1200);
+		if (tf) {
+			setTimeout(() => { $('.popupMeh').fadeOut('fast') }, 1200);
+		}
 		}
 	}
 });
@@ -686,7 +696,7 @@ function checkOlay(el) {
 }
 
 let hrefsForPopup = `a.url[href*="eksisozluk.com/entry"], a[href*="?searchform.author="], a.b[href^="/?q="][href*="%2f"], a.b[href*="%2f%40"], .stats a[href^="/?q="], a[href*="?day="], .new-update a, a[href^="/entry/"], a[href$="?a=buddyrecent"], .nextbut, .prevbut`;
-let hrefstoReturn = `a.b[href*="sorular%c4%b1n%c4%b1z%c4%b1+yan%c4%b1tl%c4%b1yor"][href*="%40"], a.b[href*="yan%c4%b1tl%c4%b1yorum"][href*="%40"], .svgico-facebook, .svgico-twitter, #whatisclicked, #site-footer a, .entry-date.permalink, #show-caylak-favs-link, a[href*="/entry/duzelt/"], .last, .next, .prev, .gotodate`;
+let hrefstoReturn = `a.b[href*="sorular%c4%b1n%c4%b1z%c4%b1+yan%c4%b1tl%c4%b1yor"][href*="%40"], a.b[href*="yan%c4%b1tl%c4%b1yorum"][href*="%40"], .svgico-facebook, .svgico-twitter, #whatisclicked, #site-footer a, .entry-date.permalink, #show-caylak-favs-link, a[href*="/entry/duzelt/"], .last, .next, .prev, .gotodate, #in-topic-search-options a[href*="?day="]`;
 
 // entryleri popup içinde aç
 $(document).on('click', hrefsForPopup, function(e){
