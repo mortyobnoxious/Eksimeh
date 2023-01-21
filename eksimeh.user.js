@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.3
+// @version      1.4
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -670,8 +670,8 @@ toggleKeydownEvents(true)
 
 function prevNext(clicked) {
 	let el = $(`.topic-list a[href="${clicked}"]`).closest('li:visible');
-	let prev = $(el).prev('li').children('a');
-	let next = $(el).next('li').children('a');
+	let prev = $(el).prev('li:visible').children('a');
+	let next = $(el).next('li:visible').children('a');
 	$(el).find('a').not('a[href*="?a=tracked&snapshot="]').css('opacity','.4');
 	let butts = `${prev.length?`<a class="nextprev prevbut" href="${prev.attr('href')}" title="${prev.text().trim()}">${SVGs.dbleft}</a>`:''}${next.length?`<a class="nextprev nextbut" href="${next.attr('href')}" title="${next.text().trim()}">${SVGs.dbright}</a>`:''}`
 	return butts
