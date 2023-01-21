@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.2
+// @version      1.3
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -49,6 +49,7 @@ GM.addStyle(`
 
 
 .popupMeh #entry-item-list .content {font-size: 14px;}
+.popupMeh #entry-item-list footer .feedback-container {float:none!important;}
 .loadingentries {margin: auto !important;display: flex;}
 .popupMeh .notdiv {background: #00000d69;}
 .noteklediv {display: flex;flex-direction: column;gap: 10px;flex: 1;color: #8798A5;}
@@ -511,7 +512,7 @@ $(document).on('click', '.addnote', function(e){
 <div>
 <label>önizleme</label><div class="formattedText" data-c="0">${formatText(not)}</div></div>
 <div class="formatButs">
-${entryid?`<button title="entry id" data-g="#${entryid}">id</button>`:''}
+${entryid?`<button title="entry id" data-g="#${entryid}">#id</button>`:''}
 <button title="bkz" data-g="\`\`">hede</button>
 <button title="link" data-g="[url text]">http://</button>
 <button title="raptiye" data-g="📌">📌</button>
@@ -831,6 +832,7 @@ randomEntryAppend();
 
 // click to open a random entry
 $(document).on('click', '.randomentry a', function(e){
+	e.preventDefault();
 	let thisID = $(this).attr('data-id');
 	if (thisID !== '1') {
 		let ind = randENTRIES.findIndex(thisID);
@@ -838,7 +840,12 @@ $(document).on('click', '.randomentry a', function(e){
 		randomEntryAppend();
 	}
 });
-
+$(document).on('click', '.popupMeh #entry-show-button', function(e){
+	e.preventDefault();
+	let ebt = $(this).closest('#entry-block-text');
+	ebt.next('#entry-item').attr('data-show', 'true');
+	ebt.hide();
+});
 function swipeNavigation(element, leftButton, rightButton) {
   let elements = document.querySelectorAll(element);
   let threshold=100, xstart=0, xend=0;
@@ -863,7 +870,7 @@ var observerFrame = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.type === 'childList') {
             solFrameHighlight();
-			linksForSolFrame()
+            linksForSolFrame()
         }
     });
 });
