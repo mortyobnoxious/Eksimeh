@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.5
+// @version      1.6
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -37,9 +37,9 @@ GM.addStyle(`
 .popup-content { display: flex; flex-wrap: wrap;padding: 15px;max-height: 400px;overflow-y: auto;}
 .popup-buttons {display: flex;align-items: center;}
 .popup-buttons a:hover {color: #5fca5f;transition: all .3s !important;}
-.popup-buttons input#searchpopup {padding: .3rem .6rem;margin-left: auto;}
+.popup-buttons input#searchpopup {padding: .3rem .6rem;margin-left: auto;max-width: 150px;}
 
-.popupMeh a {color: #53a245;}
+.popupMeh a {color: #81C14B;}
 .popupMeh #entry-item-list {width: 100%;margin: 0;}
 .popupMeh #entry-item-list #entry-item:not(:last-of-type) {border-bottom: 1px solid #00000d69;}
 .popupMeh #entry-item-list #entry-item {position: relative;padding: 0;color: #8798A5;}
@@ -47,7 +47,6 @@ GM.addStyle(`
 .popupMeh .info .entry-footer-bottom {margin-left: auto;}
 .popupMeh .favorite-links {display: flex !important;align-items: center;padding: 0 !important;margin: 0 !important;}
 .popupMeh #entry-item-list .content {max-height: initial !important;}
-
 
 .popupMeh #entry-item-list .content {font-size: 14px;}
 .popupMeh #entry-item-list footer .feedback-container {float:none!important;}
@@ -96,9 +95,11 @@ GM.addStyle(`
 .spoilit {display: inline-flex;align-items: center;gap: 4px;}
 .sporotate {transform: rotate(180deg);transition: all .3s;}
 
-.topic-list li a mark.highlighted {border-radius: 5px;padding: 0 3px;background-color: #1b7a44;color: #B8C1C8;}
+mark.highlighted {border-radius: 5px;padding: 0 3px;background-color: #1b7a44;color: #B8C1C8;}
 #video {display:none;}
 .underline {text-decoration: underline;}
+.isyazar {font-size: 11px;margin-left: 8px;display: inline-block;}
+.isyazar[title*="çaylak"] {transform: rotate(180deg);}
 
 @keyframes spin {to { -webkit-transform: rotate(360deg); }}
 @-webkit-keyframes spin {to { -webkit-transform: rotate(360deg); }}
@@ -372,14 +373,18 @@ howLongAgo();
 // add hostname to urls if url text doesn't contain hostname, fix http://https// links
 const sourceURL = () => {
 $('.url:not(.formata)').each(function(){
-	let newat = $(this).attr('href').replace('http://https//', 'https://');
-	$(this).attr('href', newat);
+	let href = $(this).attr('href').replace('http://https//', 'https://');
+	$(this).attr('href', href);
 	let hostname = $(this).prop('hostname').replace('www.','');
 	if (!$(this).next().is('.sourceurl')) {
 		if (!$(this).text().match(hostname)) {
 			$(this).after(`<sup class="sourceurl">(${hostname})</sup>`);
 		}
 	}
+
+	// remove twitter tracking
+	let tw = /twitter\.com\/\w+\/status\//gi.test(href);
+	if (tw) {$(this).attr('href', href.replace(/(\?s=|\?t=|\?ref=).*/,""))}
 });
 };
 sourceURL();
@@ -413,53 +418,124 @@ const addButtons = () => {
 }
 addButtons();
 
-function addOtherLinks() {
-// edit this
-$('#top-navigation .dropdown-menu li:not(.separated):last, #top-navigation #options-dropdown li:not(.separated):last').before(`
+
+const modifyDOM = {
+	addOtherLinks() {
+		// $('#top-navigation > ul').append(`<li><a href="#" title="ekşimeh"><svg class="eksico"><use xlink:href="#eksico-gear"></use></svg></a></li>`);
+
+		$('#top-navigation .dropdown-menu li:not(.separated):last, #top-navigation #options-dropdown li:not(.separated):last').before(`
 <li><a href="#" class="addwordsdiv flat-button wtfbutton addnosk" title="kelime ekle">kelime ekle</a></li>
 <li><a href="#" class="shownotes flat-button wtfbutton addnosk" title="kelime ekle">notlar</a></li>
 `);
-$('.sub-title-menu').append(`
+		$('.sub-title-menu').append(`
 ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 `)
-let author = $('#user-profile-title').attr('data-nick');
-$('.sub-title-menu.profile-buttons').append(`
+		let author = $('#user-profile-title').attr('data-nick');
+		$('.sub-title-menu.profile-buttons').append(`
 <a href="#" class="addnote prnote eksico" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
 `);
-}
-addOtherLinks()
+	},
 
-function linksForSolFrame() {
-	if(!$(".getfromsozlock").length) {
-		$("h2:contains(dünün en beğenilen entry'leri)").append('<a class="getfromsozlock" href="https://sozlock.com/" target="_blank" style="margin: 0 5px;font-size: 14px;" title="sozlock\'tan debe al">sozlock</a></a>');
-	}
-}
-linksForSolFrame();
-
-$(document).on('click', '.getfromsozlock', function(e){
-	e.preventDefault();
-	$(this).toggleClass('underline');
-	let topiclist = $(this).closest('#content-body, #index-section').find('.topic-list');
-	$(topiclist).addClass('loadingentries')
-	$(topiclist).find('li').toggle();
-	if ($('li.sozlock').length) {
-		$(topiclist).removeClass('loadingentries')
-		return false
-	}
-	GM.xmlHttpRequest({
-		method: "GET",
-		url: "https://sozlock.com/",
-		onload: function(response) {
-			let bunlarial = parser.parseFromString(response.responseText, "text/html");
-			let entriessoz = $(bunlarial).find('.entrylist li').map(function() {
-				return '<li class="sozlock"><a href="'+$(this).find('.basliklogo a').attr('href').replace('https://eksisozluk.com','')+'"><span class="caption"> '+$(this).find('h3').text().split(/(^\d{1,2}\.\s)/)[2]+'</span></a></li>'
-			}).get().join("");
-			$(topiclist).append(entriessoz);
-			$(topiclist).removeClass('loadingentries')
-
+	linksForSolFrame() {
+		if(!$(".getfromsozlock").length) {
+			$("h2:contains(dünün en beğenilen entry'leri)").append('<a class="getfromsozlock" href="https://sozlock.com/" target="_blank" style="margin: 0 5px;font-size: 14px;" title="sozlock\'tan debe al">sozlock</a></a>');
 		}
-	});
+	},
+	removeThings() {
+		let cl = `[class*="ad-double-click"], .bottom-ads, .under-top-ad, [id*="sponsored-index"], [id*="nativespot-unit"], #sticky-ad, #sticky-criteo, #yeni-reklam, [id*="sponsored-entry"], .under-top-ad`;
+		$(cl).remove();
+	}
+
+
+}
+Object.values(modifyDOM).forEach(fn => fn());
+
+// get debe list from sozlock
+function getSozlockDebe() {
+  return new Promise((resolve, reject) => {
+    GM.xmlHttpRequest({
+      method: "GET",
+      url: "https://sozlock.com/",
+      onload: function(response) {
+        const parsedHTML = parser.parseFromString(response.responseText, "text/html");
+        const sozlockEntries = $(parsedHTML).find('.entrylist li').map(function() {
+			let [id, title] = [
+				$(this).find('.basliklogo a').attr('href').replace('https://eksisozluk.com',''),
+				$(this).find('h3').text().replace(/^\d+\./, "")
+			];
+          return `<li class="sozlock"><a href="${id}">${title}</a></li>`;
+        }).get().join("");
+
+        resolve(sozlockEntries);
+      },
+      onerror: function(response) {
+        reject(response.statusText);
+      }
+    });
+  });
+}
+
+$(document).on('click', '.getfromsozlock', function(e) {
+  e.preventDefault();
+  $(this).toggleClass('underline');
+
+  const topicList = $(this).closest('#content-body, #index-section').find('.topic-list');
+  topicList.addClass('loadingentries');
+  topicList.find('li').toggle();
+
+  if ($('li.sozlock').length) {
+    topicList.removeClass('loadingentries');
+    return false;
+  }
+
+  getSozlockDebe().then(sozlockEntries => {
+      topicList.append(sozlockEntries);
+      topicList.removeClass('loadingentries');
+    }).catch(error => {
+	  topicList.removeClass('loadingentries');
+      console.error(error);
+    });
 });
+
+
+function checkYazar(yazar) {
+  return new Promise((resolve, reject) => {
+    GM.xmlHttpRequest({
+      method: "GET",
+      url: "https://eksisozluk.com/biri/"+yazar,
+      onload: function(response) {
+        const parsedHTML = parser.parseFromString(response.responseText, "text/html");
+		if ($(parsedHTML).find('#user-profile-title a').length) {
+			let yazar = $(parsedHTML).find('#user-text-badges').text().trim() == 'çaylak'?'çaylak':'yazar';
+			let link = $(parsedHTML).find('#user-profile-title a').attr('href').replace('/usertopic','');
+			let karma = $(parsedHTML).find('.muted').text().trim()
+			let hakkinda = $(parsedHTML).find('#profile-biography').text().trim()
+			let totalEntry = $(parsedHTML).find('#entry-count-total').text().trim()
+			let followers = $(parsedHTML).find('#user-follower-count').text().trim()
+			let followings = $(parsedHTML).find('#user-following-count').text().trim()
+			let ret = `${yazar} ${karma?` - ${karma}`:''}\n${totalEntry} entry\n${followers} takipçi\n${followings} takip`
+			resolve({ret, link});
+		}
+      },
+      onerror: function(response) {
+        reject(response.statusText);
+      }
+    });
+  });
+}
+
+function checkIfYazar() {
+let h1 = $('#topic h1#title a[itemprop="url"]')
+let title = $(h1).text().trim()
+if (title) {
+	checkYazar(title).then(ret => {
+		$(h1).after(`<a class="isyazar" title="${ret.ret}" href="${ret.link}"><svg class="eksico"><use xlink:href="#eksico-me"></use></svg></a>`);
+	}).catch(error => {
+		console.log(error)
+	});
+}
+}
+checkIfYazar()
 
 $(document).on('click', '.togglevideo', function(e){
 	e.preventDefault();
@@ -680,8 +756,9 @@ toggleKeydownEvents(true)
 
 function prevNext(clicked) {
 	let el = $(`.topic-list a[href="${clicked}"]`).closest('li:visible');
-	let prev = $(el).prev('li:visible').children('a');
-	let next = $(el).next('li:visible').children('a');
+	let li = el.hasClass('new-update')?'li.new-update':'li:visible'
+	let prev = $(el).prev(li).children('a');
+	let next = $(el).next(li).children('a');
 	$(el).find('a').not('a[href*="?a=tracked&snapshot="]').css('opacity','.4');
 	let butts = `${prev.length?`<a class="nextprev prevbut" href="${prev.attr('href')}" title="${prev.text().trim()}">${SVGs.dbleft}</a>`:''}${next.length?`<a class="nextprev nextbut" href="${next.attr('href')}" title="${next.text().trim()}">${SVGs.dbright}</a>`:''}`
 	return butts
@@ -742,6 +819,21 @@ function solFrameHighlight() {
 }
 solFrameHighlight();
 
+// get highlighted channels to top
+$("#channel-follow-list li a mark").each(function() {
+	let el = $(this).closest('li');
+    $(this).closest('ul').prepend(el);
+});
+
+// add background to active title on solframe
+const solframeActive = () => {
+	let title = $('#topic #title a').attr('href');
+	if(title) {
+		$(`.topic-list li a[href^="${title}"`).css('background-color', '#141D26');
+
+	}
+};
+solframeActive();
 
 function appendWords(ap=false) {
 	let spans = HLIGHT.values.map((a) => `<span title="silmek için çift tıkla">${a}</span>`).join('');
@@ -880,7 +972,8 @@ var observerFrame = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.type === 'childList') {
             solFrameHighlight();
-            linksForSolFrame()
+            modifyDOM.linksForSolFrame()
+			solframeActive();
         }
     });
 });
@@ -896,6 +989,7 @@ const observer = new MutationObserver(function(mutations) {
 		addButtons();
 		appendNotes();
 		spoilerOp();
+		modifyDOM.removeThings()
     });
   });
 });
