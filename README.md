@@ -45,8 +45,10 @@ eksisozluk.com için birtakım özellikler.<br>
 
 <li><h3>yazarlar hakkında not ekleme:</h3></li>
   <p>
-  yazarlar hakkında notlar girilmesini sağlar. notlar yazarın girdiği entrylerin sağ üst köşesinde görünür. tüm notlar silinebilir/düzenlenebilir.
-  notlara link ve bkz eklenebilir.
+  yazarlar hakkında notlar girilmesini sağlar. notlar yazarın girdiği entrylerin sağ üst köşesinde görünür. tüm notlar silinebilir/düzenlenebilir.<br/>
+  notlara link ve bkz eklenebilir.<br/>
+  her entry'nin sağ altında bulunan 'share' butonuna ve ardından not ekle butonuna tıklanarak yazar hakkında not eklenebilir.<br/>
+  aynı zamanda yazar profillerinde de not eklenebilir.
   </p>
 <details>
   <summary>screenshots</summary>
@@ -56,7 +58,8 @@ eksisozluk.com için birtakım özellikler.<br>
 
 <li><h3>entryleri popup içinde açma:</h3></li>
   <p>
-  entry bkzları, debe, takip gibi kısımlarda entryleri popup içerisinde açmaya yarar.
+  entry bkzları, debe, takip gibi kısımlarda entryleri popup içerisinde açmaya yarar.<br/>
+  sağ ve sol tuşlarla ileri geri gidilebilir, esc ile de popup kapatılabilir. 
   </p>
 <details>
   <summary>gif</summary>
@@ -74,7 +77,8 @@ eksisozluk.com için birtakım özellikler.<br>
 
 <li><h3>sol frame'de vurgulanacak kelimeler ekleme:</h3></li>
   <p>
-  sol frame'de vurgulamak için kelime eklemeye yarar. kelimeler çift tıklayarak silinebilir. bugün ve dünün tarihi de seçilerek eklenebilir.
+  sol frame'de vurgulamak için kelime eklemeye yarar. kelimeler çift tıklayarak silinebilir. bugün ve dünün tarihi de seçilerek eklenebilir.<br/>
+  olay butonunun hemen sağında, 3 nokta şeklinde bulunan seçenekler kısmından kelime ekle seçilerek kelimeler eklenebilir.
   </p>
 <details>
   <summary>screenshot</summary>
@@ -83,10 +87,14 @@ eksisozluk.com için birtakım özellikler.<br>
 </details>
 
 <li><h3>başlık videolarını gizleme</h3></li>
+  <p>
+  başlık videolarını gizler, ve tekrar göstermek için başlığın hemen altına 'video' isminde bir link ekler.
+  </p>
 
 <li><h3>random entry</h3></li>
 <p>
-anasayfa'daki entry idlerini biriktirip, istek dahilinde random entry getirir.
+anasayfa'daki entry idlerini biriktirip, istek dahilinde random entry getirir.<br/>
+'r' tuşuna basılarak ya da olay butonunu hemen yanında random ikonuna tıklanarak random entryler okunabilir.
 </p>
 
 <li><h3>sozlock sitesinden debe alma</h3></li>
@@ -107,6 +115,7 @@ aktif olan/o an okunan başlık sol frame'de arka plan eklenerek öne çıkarıl
 <li><h3>başlıklar yazar başlığı mı kontrolü</h3></li>
 <p>
 başlıklar aynı zamanda bir yazar ismi mi başlığın hemen yanında bir ikon ile belirtilir.
+ikon üzerine fare ile gelindiğinde yazar hakkında 'yazar veya çaylak, entry sayısı, takipçi sayısı, takip ettiklerinin sayısı' gibi bilgileri gösterir.
 </p>
 
 <li><h3>bir takım reklamları kaldırma</h3></li>
