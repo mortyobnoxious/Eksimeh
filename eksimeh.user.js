@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.6
+// @version      1.7
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=eksisozluk.com
 // @require      https://code.jquery.com/jquery-3.3.1.min.js
+// @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
+// @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @grant        GM.addStyle
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -16,7 +18,7 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
+	'use strict';
 
 GM.addStyle(`
 .flex-item {display: flex;flex-direction: column;position: fixed;background: #0f1622!important;padding: 5px 10px;border-radius: 6px;z-index: 9999999;box-shadow: 2px 2px 3px -1px rgba(2, 2, 2, 0.33);color: #8798A5!important;font-size: 16px!important;max-width: 400px!important;word-break: break-word;white-space: break-spaces;}
@@ -161,32 +163,33 @@ mark.highlighted {border-radius: 5px;padding: 0 3px;background-color: #1b7a44;co
 
 
 class TampermonkeyStorage {
-    constructor(key) {this.key = key;}
-    modify(index, value) {
-        let values = this.values;
-        index === -1
-        ? values.push(value)
-        : value
-        ? (values[index] = value)
-        : values.splice(index, 1);
-        GM_setValue(this.key, values);
-    }
-    removeAll() {GM_deleteValue(this.key);}
-    findIndex(key, value) {return this.values.findIndex(key && value ? obj => obj[key] === value : item => item === key);}
-    move(index, direction) {
-        const values = this.values;
-        const newIndex = (index + direction + values.length) % values.length;
-        const [item] = values.splice(index, 1);
-        values.splice(newIndex, 0, item);
-        GM_setValue(this.key, values);
-    }
-    get values() {return GM_getValue(this.key) || []}
+	constructor(key) {this.key = key;}
+	modify(index, value) {
+		let values = this.values;
+		index === -1
+		? values.push(value)
+		: value
+		? (values[index] = value)
+		: values.splice(index, 1);
+		GM_setValue(this.key, values);
+	}
+	removeAll() {GM_deleteValue(this.key);}
+	findIndex(key, value) {return this.values.findIndex(key && value ? obj => obj[key] === value : item => item === key);}
+	move(index, direction) {
+		const values = this.values;
+		const newIndex = (index + direction + values.length) % values.length;
+		const [item] = values.splice(index, 1);
+		values.splice(newIndex, 0, item);
+		GM_setValue(this.key, values);
+	}
+	get values() {return GM_getValue(this.key) || []}
 }
 
 const notlarGM = new TampermonkeyStorage('notlar');
 const HLIGHT = new TampermonkeyStorage('highglight');
 const SETTINGS = new TampermonkeyStorage('settings');
 const randENTRIES = new TampermonkeyStorage('entries');
+const SEEN = new TampermonkeyStorage('seen');
 
 const parser = new DOMParser();
 
@@ -198,26 +201,26 @@ function createPopup(title, div, eb="") {
   document.body.appendChild(popup);
   const closeButton = popup.querySelector('.close-button');
   document.addEventListener('click', event => {
-    if (!popup.contains(event.target) || event.target === closeButton) {
-      popup.remove();
-    }
+	if (!popup.contains(event.target) || event.target === closeButton) {
+	  popup.remove();
+	}
   });
 }
 
 // get link preview function
 function getLinkPreview(url) {
   return new Promise((resolve, reject) => {
-    GM.xmlHttpRequest({
-      method: "GET",
-      url: url,
-      onload: function(response) {
-        try {
-          const html = response.responseText;
-          const doc = parser.parseFromString(html, 'text/html');
-          const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText;
-          const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
-          const image = doc.querySelector('meta[property="og:image"]')?.content;
-          let link = doc.querySelector('link[rel="canonical"]')?.href;
+	GM.xmlHttpRequest({
+	  method: "GET",
+	  url: url,
+	  onload: function(response) {
+		try {
+		  const html = response.responseText;
+		  const doc = parser.parseFromString(html, 'text/html');
+		  const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText;
+		  const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
+		  const image = doc.querySelector('meta[property="og:image"]')?.content;
+		  let link = doc.querySelector('link[rel="canonical"]')?.href;
 		  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
 		  if (doc.querySelector('meta[property="og:site_name"]')?.content == "IMDb") {
 			  forimdb = JSON.parse(forimdb)
@@ -227,15 +230,15 @@ function getLinkPreview(url) {
 			  link = `★ ${ar} (${rc})${forimdb.duration ? " | ⏲ " + forimdb.duration.replace('PT','').toLowerCase().trim() : ""} | ${forimdb.genre?.join(', ') || ""}
 			  ${dircre ? "<br>📽 " + dircre.map(person => person.name).join(', ') : ""}`;
 		  }
-          resolve({title, description, image, link});
-        } catch (error) {
-          reject(error);
-        }
-      },
-      onerror: function(error) {
-        reject(error);
-      }
-    });
+		  resolve({title, description, image, link});
+		} catch (error) {
+		  reject(error);
+		}
+	  },
+	  onerror: function(error) {
+		reject(error);
+	  }
+	});
   });
 }
 
@@ -252,11 +255,11 @@ function createDiv(title, description, image, link) {
 	let isTweet = link?.includes('twitter.com')
 	$('.flex-item').remove();
 	var div = `<div class="flex-item">
-               <img src="${image || ""}" class="flex-image">
-               <h3 class="flex-title">${trimReplace(title)}</h3>
+			   <img src="${image || ""}" class="flex-image">
+			   <h3 class="flex-title">${trimReplace(title)}</h3>
 			   <small>${link?.includes('http') ? '<img src="https://www.google.com/s2/favicons?domain='+(new URL(link))?.hostname+'">' : ""}${link ? '<span>'+link+'</span>' : ""}</small>
-               <span class="flex-description">${isTweet ? description : trimReplace(description, 250)}</span>
-             </div>`;
+			   <span class="flex-description">${isTweet ? description : trimReplace(description, 250)}</span>
+			 </div>`;
 	$('body').append(div);
 	if (!title && !description && !image && !link) {
 		$('.flex-item').empty().text('Önizleme bulunamadı!');
@@ -312,18 +315,18 @@ $(document).on('mouseover', '.url:not(.formata)', function(e){
 
 // time since function
 const dD = (date, od=false) => {
-    const units={yıl:31536e3,ay:2592e3,gün:86400,sa:3600,dk:60,sn:1};
-    let nd=new Date;od&&(nd=new Date(od));
-    let distance = Math.abs(new Date(date) - nd) / 1000;
-    let count = 0, retMinus = false, span = "";
-    Object.keys(units).forEach((unit) => {
+	const units={yıl:31536e3,ay:2592e3,gün:86400,sa:3600,dk:60,sn:1};
+	let nd=new Date;od&&(nd=new Date(od));
+	let distance = Math.abs(new Date(date) - nd) / 1000;
+	let count = 0, retMinus = false, span = "";
+	Object.keys(units).forEach((unit) => {
 		if (count >= 2 || (count == 1 && unit == "sn")) {return;}
 		const interval = Math.floor(distance / units[unit]);
 		let sign = new Date() > new Date(date) && retMinus && count === 0 ? "-" : "";
 		if (interval > 0) {span += `${sign}${interval} ${unit} `;count++;}
 		distance %= units[unit];
-    });
-    return span.trim();
+	});
+	return span.trim();
 };
 
 // date parser from string
@@ -331,8 +334,8 @@ const parseDate = str => {
   const tsn = str.replace(' ~', '').split(/\W/g)
   const [d, m, y, h = "00", mi = "00", d1, m1, y1, h1, mi1] = tsn
   return [
-    `${y}/${m}/${d} ${h}:${mi}`,
-    `${tsn.length === 7 ? y : y1}/${tsn.length === 7 ? m : m1}/${tsn.length === 7 ? d : d1} ${tsn.length === 7 ? d1 : h1}:${tsn.length === 7 ? m1 : mi1}`
+	`${y}/${m}/${d} ${h}:${mi}`,
+	`${tsn.length === 7 ? y : y1}/${tsn.length === 7 ? m : m1}/${tsn.length === 7 ? d : d1} ${tsn.length === 7 ? d1 : h1}:${tsn.length === 7 ? m1 : mi1}`
   ]
 }
 
@@ -442,7 +445,7 @@ ${$('#video').length?'<a class="togglevideo" href="#">video</a>':""}
 		}
 	},
 	removeThings() {
-		let cl = `[class*="ad-double-click"], .bottom-ads, .under-top-ad, [id*="sponsored-index"], [id*="nativespot-unit"], #sticky-ad, #sticky-criteo, #yeni-reklam, [id*="sponsored-entry"], .under-top-ad`;
+		let cl = `[class*="ad-double-click"], .bottom-ads, .under-top-ad, [id*="sponsored"], [id*="nativespot-unit"], #sticky-ad, #sticky-criteo, [id*="reklam"], .under-top-ad`;
 		$(cl).remove();
 	}
 
@@ -453,25 +456,25 @@ Object.values(modifyDOM).forEach(fn => fn());
 // get debe list from sozlock
 function getSozlockDebe() {
   return new Promise((resolve, reject) => {
-    GM.xmlHttpRequest({
-      method: "GET",
-      url: "https://sozlock.com/",
-      onload: function(response) {
-        const parsedHTML = parser.parseFromString(response.responseText, "text/html");
-        const sozlockEntries = $(parsedHTML).find('.entrylist li').map(function() {
+	GM.xmlHttpRequest({
+	  method: "GET",
+	  url: "https://sozlock.com/",
+	  onload: function(response) {
+		const parsedHTML = parser.parseFromString(response.responseText, "text/html");
+		const sozlockEntries = $(parsedHTML).find('.entrylist li').map(function() {
 			let [id, title] = [
 				$(this).find('.basliklogo a').attr('href').replace('https://eksisozluk.com',''),
 				$(this).find('h3').text().replace(/^\d+\./, "")
 			];
-          return `<li class="sozlock"><a href="${id}">${title}</a></li>`;
-        }).get().join("");
+		  return `<li class="sozlock"><a href="${id}">${title}</a></li>`;
+		}).get().join("");
 
-        resolve(sozlockEntries);
-      },
-      onerror: function(response) {
-        reject(response.statusText);
-      }
-    });
+		resolve(sozlockEntries);
+	  },
+	  onerror: function(response) {
+		reject(response.statusText);
+	  }
+	});
   });
 }
 
@@ -484,29 +487,29 @@ $(document).on('click', '.getfromsozlock', function(e) {
   topicList.find('li').toggle();
 
   if ($('li.sozlock').length) {
-    topicList.removeClass('loadingentries');
-    return false;
+	topicList.removeClass('loadingentries');
+	return false;
   }
 
   getSozlockDebe().then(sozlockEntries => {
-      topicList.append(sozlockEntries);
-      topicList.removeClass('loadingentries');
-    }).catch(error => {
+	  topicList.append(sozlockEntries);
 	  topicList.removeClass('loadingentries');
-      console.error(error);
-    });
+	}).catch(error => {
+	  topicList.removeClass('loadingentries');
+	  console.error(error);
+	});
 });
 
 
 function checkYazar(yazar) {
   return new Promise((resolve, reject) => {
-    GM.xmlHttpRequest({
-      method: "GET",
-      url: "https://eksisozluk.com/biri/"+yazar,
-      onload: function(response) {
-        const parsedHTML = parser.parseFromString(response.responseText, "text/html");
+	GM.xmlHttpRequest({
+	  method: "GET",
+	  url: "https://eksisozluk.com/biri/"+yazar,
+	  onload: function(response) {
+		const parsedHTML = parser.parseFromString(response.responseText, "text/html");
 		if ($(parsedHTML).find('#user-profile-title a').length) {
-			let yazar = $(parsedHTML).find('#user-text-badges').text().trim() == 'çaylak'?'çaylak':'yazar';
+			let yazar = $(parsedHTML).find('#user-text-badges').text().trim().includes('çaylak')?'çaylak':'yazar';
 			let link = $(parsedHTML).find('#user-profile-title a').attr('href').replace('/usertopic','');
 			let karma = $(parsedHTML).find('.muted').text().trim()
 			let hakkinda = $(parsedHTML).find('#profile-biography').text().trim()
@@ -516,11 +519,11 @@ function checkYazar(yazar) {
 			let ret = `${yazar} ${karma?` - ${karma}`:''}\n${totalEntry} entry\n${followers} takipçi\n${followings} takip`
 			resolve({ret, link});
 		}
-      },
-      onerror: function(response) {
-        reject(response.statusText);
-      }
-    });
+	  },
+	  onerror: function(response) {
+		reject(response.statusText);
+	  }
+	});
   });
 }
 
@@ -575,7 +578,7 @@ function allNotes(ret=false) {
 
 $(document).on('input', '#searchpopup', function(e){
   let searchedText = $(this).val();
-  $(".notes > .allnotes").hide().filter(":contains('"+searchedText+"')").show();
+  $(".notes > .allnotes").hide().filter(`:contains("${searchedText}")`).show();
 });
 
 
@@ -675,20 +678,20 @@ function appendNotes(update=false) {
 appendNotes();
 
 $.fn.nextUntilWithTextNodes = function (until) {
-    var matched = $.map(this, function (elem, i, until) {
-        var matched = [];
-        while ((elem = elem.nextSibling) && elem.nodeType !== 9) {
-            if (elem.nodeType === 1 || elem.nodeType === 3) {
-                if (until && jQuery(elem).is(until)) {
-                    break;
-                }
-                matched.push(elem);
-            }
-        }
-        return matched;
-    }, until);
+	var matched = $.map(this, function (elem, i, until) {
+		var matched = [];
+		while ((elem = elem.nextSibling) && elem.nodeType !== 9) {
+			if (elem.nodeType === 1 || elem.nodeType === 3) {
+				if (until && jQuery(elem).is(until)) {
+					break;
+				}
+				matched.push(elem);
+			}
+		}
+		return matched;
+	}, until);
 
-    return this.pushStack(matched);
+	return this.pushStack(matched);
 };
 
 const spoilerOp = () => {
@@ -698,7 +701,7 @@ const spoilerOp = () => {
 			var asd = $(this).find('.spoiler');
 			if ($(as).length && !$(asd).length) {
 				$(as).eq(0).addClass('spoilit spf').append(SVGs.spoiler);
-				$(as).eq(-1).addClass('spl').css('display', 'none');
+				$(as).eq(-1).addClass('spl').not('.spf').css('display', 'none');
 				$(_this).each(function(){
 					$(this).find('.spf').nextUntilWithTextNodes(".spl").wrapAll('<span class="spoiler" style="display:none;"></span>');
 				});
@@ -714,7 +717,7 @@ $(document).on('click', '.spoilit', function(e){
 	$(this).closest(".content").css({"overflow": "visible", "max-height": "none"});
 	$(this).find('.bi-hourglass-top').toggleClass('sporotate');
 	$(this).closest('li').find('.read-more-link-wrapper a')[0]?.click();
-	$(this).closest('li').find('.spl').toggle();
+	$(this).closest('li').find('.spl').not('.spf').toggle();
 });
 
 function checkEntry(url) {
@@ -733,7 +736,7 @@ function checkEntry(url) {
 				let h1 = $(pos).find('#title a')
 				let title = `<a href="${h1.attr('href')}">${h1.text().trim()}</a>`
 				entries = entries.html();
-                resolve({title, entries})
+				resolve({title, entries})
 			} else {
 				resolve("nope")
 			}
@@ -745,10 +748,10 @@ function checkEntry(url) {
 function toggleKeydownEvents(add) {
   let keydownCallback = e => {
 	if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-    if (e.which == 37) $('.prevbut')?.trigger('click');
-    else if (e.which == 39) $('.nextbut')?.trigger('click');
-    else if (e.keyCode === 27) $(".popupMeh")?.remove();
-    else if (e.keyCode === 82) $(".randomentry a")?.trigger('click');
+	if (e.which == 37) $('.prevbut')?.trigger('click');
+	else if (e.which == 39) $('.nextbut')?.trigger('click');
+	else if (e.keyCode === 27) $(".popupMeh")?.remove();
+	else if (e.keyCode === 82) $(".randomentry a")?.trigger('click');
   }
   add ? $(document).on('keydown', keydownCallback) : $(document).off('keydown', keydownCallback);
 }
@@ -760,7 +763,7 @@ function prevNext(clicked) {
 	let prev = $(el).prev(li).children('a');
 	let next = $(el).next(li).children('a');
 	$(el).find('a').not('a[href*="?a=tracked&snapshot="]').css('opacity','.4');
-	let butts = `${prev.length?`<a class="nextprev prevbut" href="${prev.attr('href')}" title="${prev.text().trim()}">${SVGs.dbleft}</a>`:''}${next.length?`<a class="nextprev nextbut" href="${next.attr('href')}" title="${next.text().trim()}">${SVGs.dbright}</a>`:''}`
+	let butts = `${prev.length?`<a class="nextprev prevbut" href="${prev.attr('href')}" title="${prev.text().replace(/\s*\d+\s*$/, '').trim()}">${SVGs.dbleft}</a>`:''}${next.length?`<a class="nextprev nextbut" href="${next.attr('href')}" title="${next.text().replace(/\s*\d+\s*$/, '').trim()}">${SVGs.dbright}</a>`:''}`
 	return butts
 }
 
@@ -781,7 +784,7 @@ $(document).on('click', hrefsForPopup, function(e){
 	if (($(_this).is(hrefstoReturn)) || ($(_this).find('small').text() >= 11)) { return }
 	e.preventDefault();
 	let href = $(_this).attr("href").replace('www.','');
-    createPopup("", `<div class="loadingentries"></div>`, prevNext(href));
+	createPopup("", `<div class="loadingentries"></div>`, prevNext(href));
 	checkEntry(href).then(function(w) {
 		if (w == "nope") {
 			createPopup(`<small style="color: #E62537;">böyle bir entry yok. hiç olmadı ki...</small>`, ``, prevNext(href))
@@ -822,7 +825,7 @@ solFrameHighlight();
 // get highlighted channels to top
 $("#channel-follow-list li a mark").each(function() {
 	let el = $(this).closest('li');
-    $(this).closest('ul').prepend(el);
+	$(this).closest('ul').prepend(el);
 });
 
 // add background to active title on solframe
@@ -942,25 +945,78 @@ $(document).on('click', '.randomentry a', function(e){
 		randomEntryAppend();
 	}
 });
+
 $(document).on('click', '.popupMeh #entry-show-button', function(e){
 	e.preventDefault();
 	let ebt = $(this).closest('#entry-block-text');
 	ebt.next('#entry-item').attr('data-show', 'true');
 	ebt.hide();
 });
+
+
+function markAsSeen() {
+	let wls = window.location.search;
+	if (!/\?a=popular|\?a=day/.test(wls)) {return;}
+	let id = $("#topic #title").attr("data-id");
+	let time = new Date().getTime();
+	if (id) {
+		let ind = SEEN.findIndex('id', id);
+		if (ind == -1) {
+			SEEN.modify(ind, {id, time});
+		}
+	}
+}
+
+function removeSeenAfteraDay() {
+	let currentTime = new Date().getTime();
+	$('#gordumstyle').remove();
+	$('head').append('<style id="gordumstyle"></style>');
+	SEEN.values.forEach(function(item, index) {
+		$('#gordumstyle').append(`a[href*="${item.id}?a=popular"], a[href*="${item.id}?day"] {opacity:.5;}`)
+		if (currentTime - item.time > 86400000) {
+			let ind = SEEN.findIndex('id', item.id);
+			SEEN.modify(ind);
+		}
+	});
+}
+removeSeenAfteraDay();
+
+console.log(SEEN.values.length)
+
+function isScrolledIntoView(el) {
+	let rect = el.getBoundingClientRect();
+	let elemTop = rect.top;
+	let elemBottom = rect.bottom;
+	let isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+	return isVisible;
+}
+
+function scrollToEl() {
+	let el = document.getElementById('entry-item-list')?.children
+	if (!el) {return}
+	window.onscroll = function(e) {
+		if(isScrolledIntoView(el.item(5))) {
+			markAsSeen()
+			removeSeenAfteraDay()
+		}
+	}
+}
+scrollToEl()
+
+
 function swipeNavigation(element, leftButton, rightButton) {
   let elements = document.querySelectorAll(element);
   let threshold=100, xstart=0, xend=0;
   function checkDirection() {
-    if (Math.abs(xend - xstart) < threshold) return;
-    if (xend < xstart) { document.querySelector(leftButton)?.click(); }
-    if (xend > xstart) { document.querySelector(rightButton)?.click(); }
+	if (Math.abs(xend - xstart) < threshold) return;
+	if (xend < xstart) { document.querySelector(leftButton)?.click(); }
+	if (xend > xstart) { document.querySelector(rightButton)?.click(); }
   }
   for (const element of elements) {
-    element?.addEventListener("touchstart", function(e) { xstart = e.touches[0].screenX; });
-    element?.addEventListener("touchend", function(e) { xend = e.changedTouches[0].screenX; checkDirection(); });
-    element?.addEventListener("pointerdown", function(e) { xstart = e.screenX; });
-    element?.addEventListener("pointerup", function(e) { xend = e.screenX; checkDirection(); });
+	element?.addEventListener("touchstart", function(e) { xstart = e.touches[0].screenX; });
+	element?.addEventListener("touchend", function(e) { xend = e.changedTouches[0].screenX; checkDirection(); });
+	element?.addEventListener("pointerdown", function(e) { xstart = e.screenX; });
+	element?.addEventListener("pointerup", function(e) { xend = e.screenX; checkDirection(); });
   }
 }
 
@@ -968,14 +1024,14 @@ swipeNavigation('#entry-item-list footer', '#topic .pager .next', '#topic .pager
 swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar olaylar"]', 'a[title="dünyamızda neler olup bitiyor"]');
 
 
-var observerFrame = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.type === 'childList') {
-            solFrameHighlight();
-            modifyDOM.linksForSolFrame()
+const observerFrame = new MutationObserver(function(mutations) {
+	mutations.forEach(function(mutation) {
+		if (mutation.type === 'childList') {
+			solFrameHighlight();
+			modifyDOM.linksForSolFrame()
 			solframeActive();
-        }
-    });
+		}
+	});
 });
 
 observerFrame.observe(document.getElementById("partial-index"), { childList: true });
@@ -983,14 +1039,14 @@ observerFrame.observe(document.getElementById("partial-index"), { childList: tru
 // Mutation Observer
 const observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
-    $(mutation.addedNodes).find(".entry-date, .entry-share").each(function() {
+	$(mutation.addedNodes).find(".entry-date, .entry-share").each(function() {
 		howLongAgo();
 		sourceURL();
 		addButtons();
 		appendNotes();
 		spoilerOp();
 		modifyDOM.removeThings()
-    });
+	});
   });
 });
 
