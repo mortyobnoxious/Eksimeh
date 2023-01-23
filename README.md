@@ -48,7 +48,7 @@ eksisozluk.com için birtakım özellikler.<br>
   yazarlar hakkında notlar girilmesini sağlar. notlar yazarın girdiği entrylerin sağ üst köşesinde görünür. tüm notlar silinebilir/düzenlenebilir.<br/>
   notlara link ve bkz eklenebilir.<br/>
   her entry'nin sağ altında bulunan 'share' butonuna ve ardından not ekle butonuna tıklanarak yazar hakkında not eklenebilir.<br/>
-  aynı zamanda yazar profillerinde de not eklenebilir.
+  aynı zamanda yazar profillerinden de not eklenebilir.
   </p>
 <details>
   <summary>screenshots</summary>
