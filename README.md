@@ -26,7 +26,8 @@ eksisozluk.com için birtakım özellikler.<br>
 
 <li><h3>linkler için hostname:</h3></li>
   <p>
-  linklerin hemen ardından o linkin hangi siteye ait olduğunu belirten bilgiyi ekler.
+  linklerin hemen ardından o linkin hangi siteye ait olduğunu belirten bilgiyi ekler.<br/>
+  ayrıca twitter linklerinden izleme parametrelerini kaldırır.
   </p>
 <details>
   <summary>screenshot</summary>
@@ -92,5 +93,22 @@ anasayfa'daki entry idlerini biriktirip, istek dahilinde random entry getirir.
 <p>
 sozlock.com'dan debe listesini getirir.
 </p>
+
+<li><h3>başlıkları görüldü olarak işaretleme</h3></li>
+<p>
+gündem ve bugün başlıkları 5. entrysine kadar okununca, görüldü olarak işaretlenir ve sol frame'de silik olarak görünür. görüldü olarak işaretlenen başlıklar bir gün tutulur sonra silinir.
+</p>
+
+<li><h3>aktif başlığı sol frame'de belirtme</h3></li>
+<p>
+aktif olan/o an okunan başlık sol frame'de arka plan eklenerek öne çıkarılır.
+</p>
+
+<li><h3>başlıklar yazar başlığı mı kontrolü</h3></li>
+<p>
+başlıklar aynı zamanda bir yazar ismi mi başlığın hemen yanında bir ikon ile belirtilir.
+</p>
+
+<li><h3>bir takım reklamları kaldırma</h3></li>
 
 <ol>
