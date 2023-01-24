@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.7
+// @version      1.8
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -23,7 +23,8 @@
 GM.addStyle(`
 .flex-item {display: flex;flex-direction: column;position: fixed;background: #0f1622!important;padding: 5px 10px;border-radius: 6px;z-index: 9999999;box-shadow: 2px 2px 3px -1px rgba(2, 2, 2, 0.33);color: #8798A5!important;font-size: 16px!important;max-width: 400px!important;word-break: break-word;white-space: break-spaces;}
 .flex-image {width: 100%;max-height: 200px;object-fit:cover;border-radius: 6px;}
-.flex-image[src*="cdn.eksisozluk.com"] {max-height: 500px;}
+.flex-image[src*="cdn.eksisozluk.com"], .jimage img {max-height: 500px;}
+.jimage small {display:none!important;}
 .flex-title {font-size: 16px; color:#81C14B;padding:0!important;margin:0!important;}
 .flex-item small {display: flex;gap: 5px;}
 .flex-item small span {font-size:11px;opacity:.7;overflow: hidden;white-space: nowrap;word-break: break-all;text-overflow: ellipsis;}
@@ -49,6 +50,8 @@ GM.addStyle(`
 .popupMeh .info .entry-footer-bottom {margin-left: auto;}
 .popupMeh .favorite-links {display: flex !important;align-items: center;padding: 0 !important;margin: 0 !important;}
 .popupMeh #entry-item-list .content {max-height: initial !important;}
+.popupMeh.popImage .popup-content {padding: 0;}
+.popupMeh.popImage img {width: 100%;object-fit: contain;max-height: 400px;}
 
 .popupMeh #entry-item-list .content {font-size: 14px;}
 .popupMeh #entry-item-list footer .feedback-container {float:none!important;}
@@ -193,10 +196,11 @@ const SEEN = new TampermonkeyStorage('seen');
 
 const parser = new DOMParser();
 
-function createPopup(title, div, eb="") {
+function createPopup(title, div, eb="", cl="") {
   document.querySelector('.popupMeh')?.remove();
   const popup = document.createElement('div');
   popup.classList.add('popupMeh');
+  cl?popup.classList.add(cl):null;
   popup.innerHTML = `<div class="popup-header"><h3>${title}</h3><span class="popup-buttons">${eb}<span class="close-button">&times;</span></span></div><div class="popup-content">${div}</div>`;
   document.body.appendChild(popup);
   const closeButton = popup.querySelector('.close-button');
@@ -219,7 +223,7 @@ function getLinkPreview(url) {
 		  const doc = parser.parseFromString(html, 'text/html');
 		  const title = doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector('title')?.innerText;
 		  const description = doc.querySelector('meta[property="og:description"]')?.content || doc.querySelector('meta[name="description"]')?.content;
-		  const image = doc.querySelector('meta[property="og:image"]')?.content;
+		  let image = doc.querySelector('meta[property="og:image"]')?.content;
 		  let link = doc.querySelector('link[rel="canonical"]')?.href;
 		  let forimdb = doc.querySelector('script[type="application/ld+json"]')?.innerText;
 		  if (doc.querySelector('meta[property="og:site_name"]')?.content == "IMDb") {
@@ -229,6 +233,11 @@ function getLinkPreview(url) {
 			  let dircre = forimdb.director?.filter(item => item.name) || forimdb.creator?.filter(item => item.name)
 			  link = `★ ${ar} (${rc})${forimdb.duration ? " | ⏲ " + forimdb.duration.replace('PT','').toLowerCase().trim() : ""} | ${forimdb.genre?.join(', ') || ""}
 			  ${dircre ? "<br>📽 " + dircre.map(person => person.name).join(', ') : ""}`;
+		  }
+		  let contentType = response.responseHeaders.match(/content-type:\s*(.*?)\s*$/im)[1];
+		  if(contentType.startsWith("image/")) {
+			  image = response.finalUrl
+			  link = 'jimage'
 		  }
 		  resolve({title, description, image, link});
 		} catch (error) {
@@ -254,7 +263,7 @@ function trimReplace(str, len=150) {
 function createDiv(title, description, image, link) {
 	let isTweet = link?.includes('twitter.com')
 	$('.flex-item').remove();
-	var div = `<div class="flex-item">
+	let div = `<div class="flex-item${link=='jimage'?' jimage':''}">
 			   <img src="${image || ""}" class="flex-image">
 			   <h3 class="flex-title">${trimReplace(title)}</h3>
 			   <small>${link?.includes('http') ? '<img src="https://www.google.com/s2/favicons?domain='+(new URL(link))?.hostname+'">' : ""}${link ? '<span>'+link+'</span>' : ""}</small>
@@ -387,7 +396,7 @@ $('.url:not(.formata)').each(function(){
 
 	// remove twitter tracking
 	let tw = /twitter\.com\/\w+\/status\//gi.test(href);
-	if (tw) {$(this).attr('href', href.replace(/(\?s=|\?t=|\?ref=).*/,""))}
+	if (tw) {$(this).attr('href', href.replace(/(\?s=|\?t=|\?ref=|\?ref_src=).*/,""))}
 });
 };
 sourceURL();
@@ -617,14 +626,14 @@ ${entryid?`<button title="entry id" data-g="#${entryid}">#id</button>`:''}
 });
 
 $(document).on('input', '#nottextarea', function(e){
-	var text = formatText($(this).val())
+	let text = formatText($(this).val())
 	$('.formattedText').html(text).attr('data-c',text.length)
 });
 
 $(document).on('click', '.formatButs button', function(e){
 	e.preventDefault();
-	var g = $(this).attr('data-g');
-	var ae = $('#nottextarea').val();
+	let g = $(this).attr('data-g');
+	let ae = $('#nottextarea').val();
 	if (ae.length>0) {ae = ae + " "}
 	$('#nottextarea').val(ae + g).trigger('input').focus();s
 });
@@ -748,8 +757,8 @@ function checkEntry(url) {
 function toggleKeydownEvents(add) {
   let keydownCallback = e => {
 	if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-	if (e.which == 37) $('.prevbut')?.trigger('click');
-	else if (e.which == 39) $('.nextbut')?.trigger('click');
+	if (e.which == 37) $('.prevbut, .prevbutimg')?.trigger('click');
+	else if (e.which == 39) $('.nextbut, .nextbutimg')?.trigger('click');
 	else if (e.keyCode === 27) $(".popupMeh")?.remove();
 	else if (e.keyCode === 82) $(".randomentry a")?.trigger('click');
   }
@@ -781,7 +790,7 @@ let hrefstoReturn = `a.b[href*="sorular%c4%b1n%c4%b1z%c4%b1+yan%c4%b1tl%c4%b1yor
 // entryleri popup içinde aç
 $(document).on('click', hrefsForPopup, function(e){
 	let _this = $(this);
-	if (($(_this).is(hrefstoReturn)) || ($(_this).find('small').text() >= 11)) { return }
+	if (($(_this).is(hrefstoReturn)) || ($(_this).find('small').text() >= 11) || e.ctrlKey) { return }
 	e.preventDefault();
 	let href = $(_this).attr("href").replace('www.','');
 	createPopup("", `<div class="loadingentries"></div>`, prevNext(href));
@@ -795,6 +804,52 @@ $(document).on('click', hrefsForPopup, function(e){
 		if ($(_this).is('[href*="tracked&snapshot"]')) { checkOlay(href) }
 	});
 
+});
+
+function checkImage(url) {
+	return new Promise(function(resolve, reject) {
+	GM.xmlHttpRequest({
+		method: "GET",
+		url: url,
+		onload: function(response) {
+			let pos = parser.parseFromString(response.responseText, "text/html");
+			if ($(pos).find('meta[property="og:image"]').length) {
+				let image = $(pos).find('meta[property="og:image"]').attr('content');
+				resolve(image)
+			} else {
+				resolve("noimage")
+			}
+		},
+	});
+	});
+}
+// görselleri popup içinde aç
+$(document).on('click', 'a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img/"], .prevbutimg, .nextbutimg', function(e){
+	if (e.ctrlKey) { return }
+	e.preventDefault();
+	let IMGS = [];
+	let thisImg = $(this).attr('href') || $(this).attr('data-href');
+	let li = $(`a.url[href*="${thisImg}"]`).closest('#entry-item');
+	let yazar = $(li).attr('data-author');
+	let entry = $(li).attr('data-id');
+	let info = `<a href="/entry/${entry}" style="font-size: 14px;"><svg class="eksico" id="svg-hashtag"><use xlink:href="#eksico-hashtag"></use></svg></a> <a href="/biri/${yazar}">@${yazar}</a>`
+	$('a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img/"]').each(function(){
+		let href = $(this).attr('href');
+		IMGS.push(href);
+	});
+
+	let indexImg = IMGS.indexOf(thisImg);
+	let prevImg = IMGS[(indexImg - 1 + IMGS.length) % IMGS.length];
+	let nextImg = IMGS[(indexImg + 1) % IMGS.length];
+	let exbuttons = `<span>${indexImg+1}/${IMGS.length}</span>
+<a class="nextprev prevbutimg" data-href="${prevImg}">${SVGs.dbleft}</a>
+<a class="nextprev nextbutimg" data-href="${nextImg}">${SVGs.dbright}</a>`
+	IMGS.length <= 1 ? (exbuttons = '') : null;
+	createPopup(info, `<div class="loadingentries"></div>`, exbuttons, 'popImage');
+	checkImage(IMGS[indexImg]).then(function(image) {
+	if (image == "noimage") { alert("görsel bulunamadı!"); return }
+		createPopup(info, `<img src="${image}"/>`, exbuttons, 'popImage')
+	});
 });
 
 function solFrameHighlight() {
