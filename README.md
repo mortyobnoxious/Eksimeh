@@ -122,7 +122,7 @@ ikon üzerine fare ile gelindiğinde yazar hakkında 'yazar veya çaylak, entry 
 
 <li><h3>görselleri popup içerisinde açma</h3></li>
 <p>
-tıpkı entrylerde olduğu gibi o sayfayda bulunan görselleri popup içerisinde açar. ileri geri gidilebilir.
+tıpkı entrylerde olduğu gibi o sayfada bulunan görselleri popup içerisinde açar. ileri geri gidilebilir.
 </p>
 
 <ol>
