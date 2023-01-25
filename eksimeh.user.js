@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/EksiTime
-// @version      1.8
+// @version      1.8.1
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -835,7 +835,9 @@ $(document).on('click', 'a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img
 	let info = `<a href="/entry/${entry}" style="font-size: 14px;"><svg class="eksico" id="svg-hashtag"><use xlink:href="#eksico-hashtag"></use></svg></a> <a href="/biri/${yazar}">@${yazar}</a>`
 	$('a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img/"]').each(function(){
 		let href = $(this).attr('href');
-		IMGS.push(href);
+		if (!IMGS.includes(href)) {
+			IMGS.push(href);
+		}
 	});
 
 	let indexImg = IMGS.indexOf(thisImg);
@@ -1048,7 +1050,7 @@ function isScrolledIntoView(el) {
 
 function scrollToEl() {
 	let el = document.getElementById('entry-item-list')?.children
-	if (!el) {return}
+	if (!el || el.length <= 5) {return}
 	window.onscroll = function(e) {
 		if(isScrolledIntoView(el.item(5))) {
 			markAsSeen()
