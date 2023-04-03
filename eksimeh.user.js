@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Ekşimeh
-// @namespace    https://github.com/mortyobnoxious/EksiTime
+// @namespace    https://github.com/mortyobnoxious/Eksimeh
 // @version      1.8.2
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=eksisozluk.com
+// @match        https://eksisozluk2023.com/*
+// @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @grant        GM.addStyle
