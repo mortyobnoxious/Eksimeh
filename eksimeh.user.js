@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.2
+// @version      1.8.3
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
-// @match        https://eksisozluk2023.com/*
+// @match        https://eksisozluk42.com/*
 // @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
@@ -415,10 +415,10 @@ const addButtons = () => {
 		checkElExist(el, function() {
 			if (el.find('.entry-share .dropdown-menu .mehbuttons').length) {return}
 			el.find('.entry-share .dropdown-menu').prepend(`<li class="mehbuttons">
-<a href="https://eksisozluk.com/biri/${author}/usertopic" class="flat-button wtfbutton addnosk" title="yazarın başlığı">${SVGs.baslik}</a>
+<a href="/biri/${author}/usertopic" class="flat-button wtfbutton addnosk" title="yazarın başlığı">${SVGs.baslik}</a>
 <a href="${title}?a=search&author=${author}" class="flat-button wtfbutton addnosk" title="başlıktaki entryleri">${SVGs.entryleri}</a>
 <a href="#" class="flat-button wtfbutton addnosk" title="html olarak kaydet">${SVGs.html}</a>
-<a href="tg://msg_url?url=https://eksisozluk.com/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
+<a href="tg://msg_url?url=https://eksisozluk42.com/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
 <a href="#" class="addnote flat-button wtfbutton addnosk" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
 </li>`);
 		});
@@ -510,7 +510,7 @@ function checkYazar(yazar) {
   return new Promise((resolve, reject) => {
 	GM.xmlHttpRequest({
 	  method: "GET",
-	  url: "https://eksisozluk.com/biri/"+yazar,
+	  url: "/biri/"+yazar,
 	  onload: function(response) {
 		const parsedHTML = parser.parseFromString(response.responseText, "text/html");
 		if ($(parsedHTML).find('#user-profile-title a').length) {
