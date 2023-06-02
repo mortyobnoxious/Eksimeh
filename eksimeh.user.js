@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.3
+// @version      1.8.4
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
-// @match        https://eksisozluk42.com/*
+// @match        https://eksisozluk1923.com/*
 // @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
@@ -418,7 +418,7 @@ const addButtons = () => {
 <a href="/biri/${author}/usertopic" class="flat-button wtfbutton addnosk" title="yazarın başlığı">${SVGs.baslik}</a>
 <a href="${title}?a=search&author=${author}" class="flat-button wtfbutton addnosk" title="başlıktaki entryleri">${SVGs.entryleri}</a>
 <a href="#" class="flat-button wtfbutton addnosk" title="html olarak kaydet">${SVGs.html}</a>
-<a href="tg://msg_url?url=https://eksisozluk42.com/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
+<a href="tg://msg_url?url=https://${window.location.hostname}/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
 <a href="#" class="addnote flat-button wtfbutton addnosk" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
 </li>`);
 		});
@@ -1034,8 +1034,6 @@ function removeSeenAfteraDay() {
 }
 removeSeenAfteraDay();
 
-console.log(SEEN.values.length)
-
 function isScrolledIntoView(el) {
 	let rect = el.getBoundingClientRect();
 	let elemTop = rect.top;
@@ -1076,6 +1074,16 @@ function swipeNavigation(element, leftButton, rightButton) {
 swipeNavigation('#entry-item-list footer', '#topic .pager .next', '#topic .pager .prev');
 swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar olaylar"]', 'a[title="dünyamızda neler olup bitiyor"]');
 
+const insertPoopEmoji = () => {
+  document.querySelectorAll('.footer-info')
+    .forEach(div => {
+      const subscriberBadgeDiv = div.querySelector('#subscriber-badge-entry');
+      if (subscriberBadgeDiv) subscriberBadgeDiv.innerHTML = '💩';
+    });
+};
+
+insertPoopEmoji();
+
 
 const observerFrame = new MutationObserver(function(mutations) {
 	mutations.forEach(function(mutation) {
@@ -1098,7 +1106,8 @@ const observer = new MutationObserver(function(mutations) {
 		addButtons();
 		appendNotes();
 		spoilerOp();
-		modifyDOM.removeThings()
+		modifyDOM.removeThings();
+		insertPoopEmoji();
 	});
   });
 });
