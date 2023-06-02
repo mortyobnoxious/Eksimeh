@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.4
+// @version      1.8.5
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -1084,6 +1084,19 @@ const insertPoopEmoji = () => {
 
 insertPoopEmoji();
 
+const addSukela = () => {
+  const targetDiv = document.querySelector('#in-topic-nice-menu');
+  const sourceAnchors = document.querySelectorAll('#in-topic-nice-options li a');
+  sourceAnchors.forEach(({ href, textContent }) => {
+    if (href.endsWith('?a=dailynice') || href.endsWith('?a=nice')) {
+      const newAnchor = targetDiv.appendChild(document.createElement('a'));
+      newAnchor.href = href;
+      newAnchor.textContent = textContent;
+    }
+  });
+};
+
+addSukela();
 
 const observerFrame = new MutationObserver(function(mutations) {
 	mutations.forEach(function(mutation) {
