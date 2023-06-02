@@ -126,5 +126,14 @@ tıpkı entrylerde olduğu gibi o sayfada bulunan görselleri popup içerisinde 
 </p>
 
 <li><h3>sarı tiki bokla değiştirme</h3></li>
+
+<li><h3>son 24 saat ve tümü direkt olarak başlık altında</h3></li>
+<p>
+tıpkı entrylerde olduğu gibi o sayfada bulunan görselleri popup içerisinde açar. ileri geri gidilebilir.
+</p>
+<details>
+  <summary>screenshot</summary>
+  <img src="https://user-images.githubusercontent.com/42044258/242912718-e55d0159-62f7-4954-b53c-1c464058a011.png"/>
+</details>
   
 <ol>
