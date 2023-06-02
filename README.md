@@ -125,4 +125,6 @@ ikon üzerine fare ile gelindiğinde yazar hakkında 'yazar veya çaylak, entry 
 tıpkı entrylerde olduğu gibi o sayfada bulunan görselleri popup içerisinde açar. ileri geri gidilebilir.
 </p>
 
+<li><h3>sarı tiki bokla değiştirme</h3></li>
+  
 <ol>
