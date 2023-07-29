@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.5
+// @version      1.8.6
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -368,7 +368,7 @@ const howLongAgo = () => {
 		let els = $(this).closest('li, #quote-entry, .outgoing, .incoming');
 		$(els).find('.nekadaronce').remove();
 		$(els).prepend(`<div class="nekadaronce" style="margin: 0 0 5px 0;">
-<a href="${hrefen}" title="${formattedDate(rdate)}${titleReadable1 || ""}">
+<a href="${hrefen}" title="${formattedDate(rdate)}\n${titleReadable1 || ""}">
 <small style="padding: 2px 3px;font-size: 11px;">${vdistance}</small>
 </a>
 </div>`);
@@ -468,7 +468,7 @@ function getSozlockDebe() {
 		const parsedHTML = parser.parseFromString(response.responseText, "text/html");
 		const sozlockEntries = $(parsedHTML).find('.entrylist li').map(function() {
 			let [id, title] = [
-				$(this).find('.basliklogo a').attr('href').replace('https://eksisozluk.com',''),
+				$(this).find('.basliklogo a').attr('href').replace(`https://${window.location.hostname}`,''),
 				$(this).find('h3').text().replace(/^\d+\./, "")
 			];
 		  return `<li class="sozlock"><a href="${id}">${title}</a></li>`;
@@ -780,7 +780,7 @@ function checkOlay(el) {
 	}
 }
 
-let hrefsForPopup = `a.url[href*="eksisozluk.com/entry"], a[href*="?searchform.author="], a.b[href^="/?q="][href*="%2f"], a.b[href*="%2f%40"], .stats a[href^="/?q="], a[href*="?day="], .new-update a, a[href^="/entry/"], a[href$="?a=buddyrecent"], .nextbut, .prevbut`;
+let hrefsForPopup = `a.url[href*=".com/entry/"], a[href*="?searchform.author="], a.b[href^="/?q="][href*="%2f"], a.b[href*="%2f%40"], .stats a[href^="/?q="], a[href*="?day="], .new-update a, a[href^="/entry/"], a[href$="?a=buddyrecent"], .nextbut, .prevbut`;
 let hrefstoReturn = `a.b[href*="sorular%c4%b1n%c4%b1z%c4%b1+yan%c4%b1tl%c4%b1yor"][href*="%40"], a.b[href*="yan%c4%b1tl%c4%b1yorum"][href*="%40"], .svgico-facebook, .svgico-twitter, #whatisclicked, #site-footer a, .entry-date.permalink, #show-caylak-favs-link, a[href*="/entry/duzelt/"], .last, .next, .prev, .gotodate, #in-topic-search-options a[href*="?day="]`;
 
 // entryleri popup içinde aç
@@ -1075,9 +1075,9 @@ swipeNavigation('#entry-item-list footer', '#topic .pager .next', '#topic .pager
 swipeNavigation('.home-page-entry-list footer, .edittools', 'a[title="olaylar olaylar"]', 'a[title="dünyamızda neler olup bitiyor"]');
 
 const insertPoopEmoji = () => {
-  document.querySelectorAll('.footer-info')
+  document.querySelectorAll('.footer-info, .profile-top-container')
     .forEach(div => {
-      const subscriberBadgeDiv = div.querySelector('#subscriber-badge-entry');
+      const subscriberBadgeDiv = div.querySelector('#subscriber-badge-entry, #subscriber-badge');
       if (subscriberBadgeDiv) subscriberBadgeDiv.innerHTML = '💩';
     });
 };
@@ -1087,7 +1087,7 @@ insertPoopEmoji();
 const addSukela = () => {
   const targetDiv = document.querySelector('#in-topic-nice-menu');
   const sourceAnchors = document.querySelectorAll('#in-topic-nice-options li a');
-  sourceAnchors.forEach(({ href, textContent }) => {
+  [...sourceAnchors].reverse().forEach(({ href, textContent }) => {
     if (href.endsWith('?a=dailynice') || href.endsWith('?a=nice')) {
       const newAnchor = targetDiv.appendChild(document.createElement('a'));
       newAnchor.href = href;
