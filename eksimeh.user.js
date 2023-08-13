@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.6
+// @version      1.8.7
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -288,7 +288,7 @@ function rTL(x, y) {
 
 // create link preview on mouseover
 $(document).on('mouseover', '.url:not(.formata)', function(e){
-	let href = $(this).attr('href');
+	let href = $(this).attr('href').replace('x.com/', 'twitter.com/');
 	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.lacontrevoie.fr/i/status/' + href.split('status/').pop()}
 	if (href.includes('open.spotify.com/track')) {href = 'https://musicstax.com/track/' + href.split('track/').pop()}
 	$('body').append('<div class="flex-item loadingpr"></div>')
@@ -1009,7 +1009,6 @@ $(document).on('click', '.popupMeh #entry-show-button', function(e){
 
 function markAsSeen() {
 	let wls = window.location.search;
-	if (!/\?a=popular|\?a=day/.test(wls)) {return;}
 	let id = $("#topic #title").attr("data-id");
 	let time = new Date().getTime();
 	if (id) {
@@ -1022,15 +1021,15 @@ function markAsSeen() {
 
 function removeSeenAfteraDay() {
 	let currentTime = new Date().getTime();
-	$('#gordumstyle').remove();
-	$('head').append('<style id="gordumstyle"></style>');
-	SEEN.values.forEach(function(item, index) {
-		$('#gordumstyle').append(`a[href*="${item.id}?a=popular"], a[href*="${item.id}?day"] {opacity:.5;}`)
+	SEEN.values.forEach(function(item) {
 		if (currentTime - item.time > 86400000) {
 			let ind = SEEN.findIndex('id', item.id);
 			SEEN.modify(ind);
 		}
 	});
+	$('#gordumstyle').remove();
+	const cssSelectors = SEEN.values.map(item => `.topic-list li > a[href*="${item.id}"]`).join(', ');
+	$('head').append(`<style id="gordumstyle">${cssSelectors} {opacity:.5;}</style>`);
 }
 removeSeenAfteraDay();
 
