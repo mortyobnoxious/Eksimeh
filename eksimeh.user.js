@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.7
+// @version      1.8.8
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
@@ -252,6 +252,7 @@ function trimReplace(str, len=150) {
 	str = str ? (str.trim().length > len) ? str.trim().substring(0, len) + "..." : str.trim() : "";
 	str = str.replace(/Key, tempo of | \| Musicstax| - IMDb/gi, '')
 	if (str.includes('Find the key and tempo for')) {str = ""}
+	if (str.includes('on Instagra')) {str = str.replace(/(\n|\s\s+)/g, ' ')}
 	return str
 }
 
@@ -289,7 +290,7 @@ function rTL(x, y) {
 // create link preview on mouseover
 $(document).on('mouseover', '.url:not(.formata)', function(e){
 	let href = $(this).attr('href').replace('x.com/', 'twitter.com/');
-	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.lacontrevoie.fr/i/status/' + href.split('status/').pop()}
+	if (href.includes('twitter.com') && href.includes('/status/') ) {href = 'https://nitter.privacydev.net/i/status/' + href.split('status/').pop()}
 	if (href.includes('open.spotify.com/track')) {href = 'https://musicstax.com/track/' + href.split('track/').pop()}
 	$('body').append('<div class="flex-item loadingpr"></div>')
 	if (!$(this).hasClass('dataadded') || $(this).attr('data-title') == "Error") {
@@ -391,7 +392,7 @@ $('.url:not(.formata)').each(function(){
 	}
 
 	// remove twitter tracking
-	let tw = /twitter\.com\/\w+\/status\//gi.test(href);
+	let tw = /(?:twitter\.com|x\.com)\/\w+\/status\//gi.test(href);
 	if (tw) {$(this).attr('href', href.replace(/(\?s=|\?t=|\?ref=|\?ref_src=).*/,""))}
 });
 };
@@ -756,7 +757,7 @@ function toggleKeydownEvents(add) {
 	if (e.which == 37) $('.prevbut, .prevbutimg')?.trigger('click');
 	else if (e.which == 39) $('.nextbut, .nextbutimg')?.trigger('click');
 	else if (e.keyCode === 27) $(".popupMeh")?.remove();
-	else if (e.keyCode === 82) $(".randomentry a")?.trigger('click');
+	else if (e.keyCode === 82) $(".randomentry a")?.focus().trigger('click');
   }
   add ? $(document).on('keydown', keydownCallback) : $(document).off('keydown', keydownCallback);
 }
