@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.8
+// @version      1.8.9
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
-// @match        https://eksisozluk1923.com/*
+// @match        https://eksisozluk1999.com/*
 // @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
@@ -82,7 +82,7 @@ GM.addStyle(`
 .dunbug + label {display: flex;justify-content: center;align-items: center;border-radius: 6px;border: 1px solid #1b2836 !important;transition: all .3s;cursor:pointer}
 .dunbug {display:none;}
 .dunbug:checked + label {background: #1b7a44;color: #B8C1C8;}
-.nextprev {display: flex;height: 100%;align-items: center;padding: 0 5px;}
+.nextprev {display: flex;height: 100%;align-items: center;padding: 0 5px;text-decoration:none!important;}
 .nextprev:hover {background: #265d26;transition: all .3s;}
 .randomentry {vertical-align: bottom;}
 .addnote.prnote {display: inline-flex;border: 1px solid #141D26;border-radius: 50%;height: 32px;width: 32px;align-items: center;justify-content: center;}
@@ -97,6 +97,7 @@ GM.addStyle(`
 mark.highlighted {border-radius: 5px;padding: 0 3px;background-color: #1b7a44;color: #B8C1C8;}
 #video {display:none;}
 .underline {text-decoration: underline;}
+.popinactive {opacity: .3;pointer-events: none;}
 .isyazar {font-size: 11px;margin-left: 8px;display: inline-block;}
 .isyazar[title*="çaylak"] {transform: rotate(180deg);}
 .avatar {overflow: hidden;}
@@ -252,7 +253,7 @@ function trimReplace(str, len=150) {
 	str = str ? (str.trim().length > len) ? str.trim().substring(0, len) + "..." : str.trim() : "";
 	str = str.replace(/Key, tempo of | \| Musicstax| - IMDb/gi, '')
 	if (str.includes('Find the key and tempo for')) {str = ""}
-	if (str.includes('on Instagra')) {str = str.replace(/(\n|\s\s+)/g, ' ')}
+	if (str.includes('on Instagram')) {str = str.replace(' on Instagram','').replace(/(\n|\s\s+)/g, ' ')}
 	return str
 }
 
@@ -430,7 +431,7 @@ addButtons();
 
 const modifyDOM = {
 	addOtherLinks() {
-		// $('#top-navigation > ul').append(`<li><a href="#" title="ekşimeh"><svg class="eksico"><use xlink:href="#eksico-gear"></use></svg></a></li>`);
+		// $('#top-navigation > ul').append(`<li><a href="#" class=""eksimehSettings title="ekşimeh"><svg class="eksico"><use xlink:href="#eksico-gear"></use></svg></a></li>`);
 
 		$('#top-navigation .dropdown-menu li:not(.separated):last, #top-navigation #options-dropdown li:not(.separated):last').before(`
 <li><a href="#" class="addwordsdiv flat-button wtfbutton addnosk" title="kelime ekle">kelime ekle</a></li>
@@ -534,11 +535,12 @@ function checkYazar(yazar) {
 }
 
 function checkIfYazar() {
-let h1 = $('#topic h1#title a[itemprop="url"]')
-let title = $(h1).text().trim()
+let h1 = $('#topic h1#title')
+if($('.home-page-entry-list').length) return
+let title = $(h1).attr('data-slug')
 if (title) {
 	checkYazar(title).then(ret => {
-		$(h1).after(`<a class="isyazar" title="${ret.ret}" href="${ret.link}"><svg class="eksico"><use xlink:href="#eksico-me"></use></svg></a>`);
+		$(h1).append(`<a class="isyazar" title="${ret.ret}" href="${ret.link}"><svg class="eksico"><use xlink:href="#eksico-me"></use></svg></a>`);
 	}).catch(error => {
 		console.log(error)
 	});
@@ -820,6 +822,14 @@ function checkImage(url) {
 	});
 	});
 }
+
+function retNextPrevClick(a) {
+    let icon = a ? "&#62;&#62;" : "&#60;&#60;";
+    let action = a ? "#topic .pager .next" : "#topic .pager .prev";
+    let isActive = document.querySelector(action) ? " active":" popinactive"
+    return `<a href="#" class="nextprev${isActive}" onclick="document.querySelector('${action}')?.click(); return false;">${icon}</a>`;
+}
+
 // görselleri popup içinde aç
 $(document).on('click', 'a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img/"], .prevbutimg, .nextbutimg', function(e){
 	if (e.ctrlKey) { return }
@@ -840,9 +850,9 @@ $(document).on('click', 'a.url[href*="soz.lk/i"], .url[href*="eksisozluk.com/img
 	let indexImg = IMGS.indexOf(thisImg);
 	let prevImg = IMGS[(indexImg - 1 + IMGS.length) % IMGS.length];
 	let nextImg = IMGS[(indexImg + 1) % IMGS.length];
-	let exbuttons = `<span>${indexImg+1}/${IMGS.length}</span>
+	let exbuttons = `<span>${indexImg+1}/${IMGS.length}</span>${retNextPrevClick()}
 <a class="nextprev prevbutimg" data-href="${prevImg}">${SVGs.dbleft}</a>
-<a class="nextprev nextbutimg" data-href="${nextImg}">${SVGs.dbright}</a>`
+<a class="nextprev nextbutimg" data-href="${nextImg}">${SVGs.dbright}</a>${retNextPrevClick(true)}`
 	IMGS.length <= 1 ? (exbuttons = '') : null;
 	createPopup(info, `<div class="loadingentries"></div>`, exbuttons, 'popImage');
 	checkImage(IMGS[indexImg]).then(function(image) {
