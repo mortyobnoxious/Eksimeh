@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.9
+// @version      1.8.9.1
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        https://eksisozluk.com/*
-// @match        https://eksisozluk1999.com/*
+// @match        *://*.eksisozluk111.com/*
 // @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
 // @updateURL    https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
