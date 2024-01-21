@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.9.1
+// @version      1.8.9.2
 // @description  some eksisozluk improvements
 // @author       Morty
-// @match        https://eksisozluk.com/*
+// @match        *://*.eksisozluk.com/*
 // @match        *://*.eksisozluk111.com/*
 // @icon         https://www.google.com/s2/favicons?sz=32&domain=eksisozluk.com
 // @downloadURL  https://github.com/mortyobnoxious/Eksimeh/raw/main/eksimeh.user.js
@@ -161,6 +161,69 @@ const SVGs = {
 </svg>`,
 }
 
+function baseHTML(title,divs) {
+return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${title}</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2381c14b' viewBox='0 0 18 18'%3E%3Cpath d='M6.71981 17.3999C3.55072 17.3999 1 14.8492 1 11.6801C1 8.58831 6.71981 1.3999 6.71981 1.3999C6.71981 1.3999 12.4396 8.58831 12.4396 11.6801C12.4396 14.8492 9.88889 17.3999 6.71981 17.3999ZM6.71981 17.3999C6.7971 17.3999 6.7971 17.3999 6.71981 17.3999Z' stroke-width='1.3'%3E%3C/path%3E%3C/svg%3E" type="image/svg+xml"/>
+<style type="text/css">
+html {background: #1b2836;color: #8798A5;font-family: Calibri;}
+body {width: 600px;max-width: calc(100% - 20px);margin: 10px auto 0 auto;counter-reset: debe;}
+.gen {display: flex;flex-direction: column;background: #15212d;margin-bottom: 15px;box-shadow: 2px 3px 3px rgba(0,0,0,0.52);}
+.entry {padding: 0 10px;line-height: 1.3;letter-spacing: .2;word-break: break-word;}
+.footer {display: flex;justify-content: space-between;padding: 5px 5px;border-top: 1px solid #1b2836;margin-top: 5px;gap: 20px;}
+.footer a {color: #5C6570;font-size: 12px;}
+.footer a:last-child {border-left: 2px solid #1b2836;padding-left: 5px;}
+.footer span[data-fav] {display: flex;align-items: center;justify-content: center;gap: 3px;font-size: 12px;color: #bdbdbd;}
+.footer span[data-fav="0"] {opacity: 0;}
+.footer > span:not([data-fav]) {display: flex;gap: 5px;}
+.footer svg {width: 12px;height: 12px;fill: #1b2836;stroke: #bdbdbd;}
+h1 {font-size: 1.1rem;background: #10171f;padding: 3px 8px;margin: 0 0 10px 0;}
+h1 a {color: #A9894F;text-decoration: none;}
+h1.debe {display: flex;align-items: center;gap: 5px;position: sticky;top: 0;}
+h1.debe::before {content: counter(debe);counter-increment: debe;border-right: 1px solid #1b2836;padding-right: 5px;}
+a {color: #81C14B;text-decoration: none;}
+a:hover {color: #fff !important;transition: all .3s !important;}
+.url {display: inline-flex;align-items: center;gap: 3px;}
+.url::after {content: "🔗";font-size: 10px;}
+.ab a::after {content: "("attr(data-query)")";font-size: 10px;}
+.read-more {display: block;margin: 10px 0 0 0;font-style: italic;}
+.read-more span {margin-right: 8px;background-color: #323f4b;border-radius: 10%;padding: 0 3px;color: #8798A5;}
+.read-more + .more-text {display: none;}
+</style>
+</head>
+<body>
+${divs}
+<script>
+const ENTRY = document.querySelectorAll('.entry');
+const H1 = document.querySelectorAll('.gen > h1');
+function truncateNode(e,n=20){var t=e.innerHTML.match(/<[^>]+>|[^<>]+/g),i=t.slice(0,n).join(" "),n=t.slice(n,e.length).join(" ");e.innerHTML.length>i.length&&n.length>i.length&&(i=\`\${i} <a href="javascript:void(0);" onclick="readMore(this)" class="read-more"><span>...</span>devamını okuyayım</a><span class='more-text'>\${n}</span>\`,e.innerHTML=i)}
+function readMore(e){e.nextSibling.replaceWith(...e.nextSibling.childNodes),e.remove()}
+1<ENTRY.length&&H1.forEach(e=>{e.classList.add("debe")}),
+ENTRY.forEach(e=>{truncateNode(e)});
+</script>
+</body>
+</html>`
+}
+
+function entryHTML(title,entry,id,author,fav=0,date) {
+return `<div class="gen">
+<h1><a href="https://${window.location.hostname}/?q=${title}" target="_blank">${title}</a></h1>
+<div class="entry">${entry}</div>
+<div class="footer">
+<span data-fav="${fav}"><svg class="eksico"><use xlink:href="#eksico-drop"><symbol id="eksico-drop" viewBox="0 0 14 19">
+    <path d="M6.71981 17.3999C3.55072 17.3999 1 14.8492 1 11.6801C1 8.58831 6.71981 1.3999 6.71981 1.3999C6.71981 1.3999 12.4396 8.58831 12.4396 11.6801C12.4396 14.8492 9.88889 17.3999 6.71981 17.3999ZM6.71981 17.3999C6.7971 17.3999 6.7971 17.3999 6.71981 17.3999Z" stroke-width="1.3"></path>
+  </symbol></use></svg>${fav}</span>
+<span>
+<a href="https://${window.location.hostname}/entry/${id}" target="_blank">${date}</a>
+<a href="https://${window.location.hostname}/biri/${author}" target="_blank">@${author}</a>
+</span>
+</div>
+</div>`
+}
 
 class TampermonkeyStorage {
 	constructor(key) {this.key = key;}
@@ -206,6 +269,14 @@ function createPopup(title, div, eb="", cl="") {
 	  popup.remove();
 	}
   });
+}
+
+function saveAs(title, data, ext) {
+  const blob = new Blob([data], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${title}.${ext}`;
+  link.click();
 }
 
 // get link preview function
@@ -419,7 +490,7 @@ const addButtons = () => {
 			el.find('.entry-share .dropdown-menu').prepend(`<li class="mehbuttons">
 <a href="/biri/${author}/usertopic" class="flat-button wtfbutton addnosk" title="yazarın başlığı">${SVGs.baslik}</a>
 <a href="${title}?a=search&author=${author}" class="flat-button wtfbutton addnosk" title="başlıktaki entryleri">${SVGs.entryleri}</a>
-<a href="#" class="flat-button wtfbutton addnosk" title="html olarak kaydet">${SVGs.html}</a>
+<a href="https://${window.location.hostname}/entry/${id}" class="flat-button wtfbutton addnosk savehtml" title="html olarak kaydet">${SVGs.html}</a>
 <a href="tg://msg_url?url=https://${window.location.hostname}/entry/${id}" class="flat-button wtfbutton addnosk" title="telegram'da paylaş">${SVGs.telegram}</a>
 <a href="#" class="addnote flat-button wtfbutton addnosk" title="not ekle" data-author="${author}">${SVGs.notekle}</a>
 </li>`);
@@ -470,7 +541,7 @@ function getSozlockDebe() {
 		const parsedHTML = parser.parseFromString(response.responseText, "text/html");
 		const sozlockEntries = $(parsedHTML).find('.entrylist li').map(function() {
 			let [id, title] = [
-				$(this).find('.basliklogo a').attr('href').replace(`https://${window.location.hostname}`,''),
+				$(this).find('.basliklogo a').attr('href').replace(/^.*\/\/[^\/]+/, ''),
 				$(this).find('h3').text().replace(/^\d+\./, "")
 			];
 		  return `<li class="sozlock"><a href="${id}">${title}</a></li>`;
@@ -752,6 +823,25 @@ function checkEntry(url) {
 	});
 	});
 }
+
+$(document).on('click', '.savehtml', function(e){
+    e.preventDefault();
+    let href = $(this).attr('href');
+    checkEntry(href).then(function(w) {
+    let entries = ""
+    $(w.entries).filter('li').each(function(i, entry) {
+        let id = $(entry).attr('data-id');
+        let author = $(entry).attr('data-author');
+        let fav = $(entry).attr('data-favorite-count');
+        let content = $(entry).find('.content').html().replace(/href="\//g, `href="https://${window.location.hostname}/`).replace(/class="b"/g,'class="b" target="_blank"');
+        let date = $(entry).find('.entry-date').text().trim();
+        let avatar = $(entry).find('.avatar').attr('src');
+        entries += entryHTML($(w.title).text(), content, id, author, fav, date);
+    });
+    saveAs($(w.title).text(), baseHTML($(w.title).text(), entries), "html");
+    });
+
+});
 
 function toggleKeydownEvents(add) {
   let keydownCallback = e => {
