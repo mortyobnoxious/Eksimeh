@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ekşimeh
 // @namespace    https://github.com/mortyobnoxious/Eksimeh
-// @version      1.8.9.2
+// @version      1.8.9.3
 // @description  some eksisozluk improvements
 // @author       Morty
 // @match        *://*.eksisozluk.com/*
@@ -179,8 +179,9 @@ body {width: 600px;max-width: calc(100% - 20px);margin: 10px auto 0 auto;counter
 .footer a:last-child {border-left: 2px solid #1b2836;padding-left: 5px;}
 .footer span[data-fav] {display: flex;align-items: center;justify-content: center;gap: 3px;font-size: 12px;color: #bdbdbd;}
 .footer span[data-fav="0"] {opacity: 0;}
-.footer > span:not([data-fav]) {display: flex;gap: 5px;}
+.footer > span:not([data-fav]) {display: flex;gap: 5px;align-items: center;}
 .footer svg {width: 12px;height: 12px;fill: #1b2836;stroke: #bdbdbd;}
+.avatar {width: 32px;height: 32px;border-radius: 50%;}
 h1 {font-size: 1.1rem;background: #10171f;padding: 3px 8px;margin: 0 0 10px 0;}
 h1 a {color: #A9894F;text-decoration: none;}
 h1.debe {display: flex;align-items: center;gap: 5px;position: sticky;top: 0;}
@@ -209,7 +210,7 @@ ENTRY.forEach(e=>{truncateNode(e)});
 </html>`
 }
 
-function entryHTML(title,entry,id,author,fav=0,date) {
+function entryHTML(title,entry,id,author,fav=0,date,avatar) {
 return `<div class="gen">
 <h1><a href="https://${window.location.hostname}/?q=${title}" target="_blank">${title}</a></h1>
 <div class="entry">${entry}</div>
@@ -220,6 +221,7 @@ return `<div class="gen">
 <span>
 <a href="https://${window.location.hostname}/entry/${id}" target="_blank">${date}</a>
 <a href="https://${window.location.hostname}/biri/${author}" target="_blank">@${author}</a>
+<img class="avatar" src="${avatar}">
 </span>
 </div>
 </div>`
@@ -835,8 +837,8 @@ $(document).on('click', '.savehtml', function(e){
         let fav = $(entry).attr('data-favorite-count');
         let content = $(entry).find('.content').html().replace(/href="\//g, `href="https://${window.location.hostname}/`).replace(/class="b"/g,'class="b" target="_blank"');
         let date = $(entry).find('.entry-date').text().trim();
-        let avatar = $(entry).find('.avatar').attr('src');
-        entries += entryHTML($(w.title).text(), content, id, author, fav, date);
+        let avatar = $(entry).find('.avatar').attr('src').replace('/Content/',`https://${window.location.hostname}/Content/`);
+        entries += entryHTML($(w.title).text(), content, id, author, fav, date, avatar);
     });
     saveAs($(w.title).text(), baseHTML($(w.title).text(), entries), "html");
     });
